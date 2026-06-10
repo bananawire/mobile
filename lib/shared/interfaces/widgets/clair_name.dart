@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+class ClairName extends StatelessWidget {
+  final double height;
+  final double? width;
+  final Color? color;
+
+  const ClairName({
+    super.key,
+    this.height = 18.0,
+    this.width,
+    this.color = Colors.white,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Original SVG is 138x18.
+    final computedWidth = width ?? (height * 138.0) / 18.0;
+
+    return SvgPicture.string(
+      '''<svg width="138" height="18" viewBox="0 0 138 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_871_1454)">
+<path d="M3.33333 16.6667C2.39584 16.6667 1.60591 16.3455 0.963541 15.7031C0.32118 15.0435 0 14.2535 0 13.3333V6.66667H3.33333V11.6667C3.33333 12.1354 3.48959 12.5347 3.80208 12.8646C4.13195 13.1771 4.53125 13.3333 5 13.3333H20C20 14.2708 19.6701 15.0608 19.0104 15.7031C18.3507 16.3455 17.5695 16.6667 16.6667 16.6667H3.33333ZM0 3.33333V0H20C20 0.9375 19.6701 1.72743 19.0104 2.36979C18.3507 3.01215 17.5695 3.33333 16.6667 3.33333H0ZM33.3333 16.6667V0H36.6667V13.3333H53.3333C53.3333 14.2708 53.0035 15.0608 52.3437 15.7031C51.684 16.3455 50.9028 16.6667 50 16.6667H33.3333ZM66.6667 16.6667V6.66667H86.6667V16.6667H83.3333V10H70V16.6667H66.6667ZM70 3.33333C69.0625 3.33333 68.2725 3.01215 67.6303 2.36979C66.9879 1.71007 66.6667 0.920139 66.6667 0H86.6667C86.6667 0.9375 86.3368 1.72743 85.6771 2.36979C85.0173 3.01215 84.2361 3.33333 83.3333 3.33333H70ZM100 16.6667V0H103.333V16.6667H100ZM116.667 16.6667V6.66667H131.667C132.118 6.66667 132.509 6.51041 132.839 6.19792C133.168 5.86805 133.333 5.46875 133.333 5V3.33333H120C119.063 3.33333 118.273 3.01215 117.63 2.36979C116.988 1.71007 116.667 0.920139 116.667 0H136.667V6.66667C136.667 7.60416 136.337 8.39409 135.677 9.03645C135.017 9.67881 134.236 10 133.333 10H130L136.667 16.6667H131.667L125 10H120V16.6667H116.667Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_871_1454">
+<rect width="137.333" height="17.3333" fill="white"/>
+</clipPath>
+</defs>`
+</svg>''',
+      width: computedWidth,
+      height: height,
+      colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+    );
+  }
+}

@@ -1,0 +1,3 @@
+class GetUserOrganizationsQuery {
+  const GetUserOrganizationsQuery();
+}

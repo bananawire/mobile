@@ -45,4 +45,12 @@ app.*.map.json
 /android/app/release
 
 files/
-.env
+
+/linux
+/macos
+/web
+/windows
+
+*.json
+config.bat
+node_modules
