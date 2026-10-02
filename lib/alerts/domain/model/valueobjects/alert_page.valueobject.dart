@@ -15,4 +15,7 @@ class AlertPage {
     required this.size,
     required this.number,
   });
+
+  int get page => number;
 }
+

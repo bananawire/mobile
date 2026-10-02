@@ -62,4 +62,24 @@ class AlertResponseResource {
     if (value is num) return value;
     return num.tryParse(value?.toString() ?? '') ?? 0;
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'deviceId': deviceId,
+    if (spaceId != null) 'spaceId': spaceId,
+    if (spaceName != null) 'spaceName': spaceName,
+    if (deviceName != null) 'deviceName': deviceName,
+    'metric': metric,
+    'metricLabel': metricLabel,
+    'metricUnit': metricUnit,
+    'thresholdValue': thresholdValue,
+    'actualValue': actualValue,
+    'message': message,
+    'status': status,
+    'severity': severity,
+    'occurredAt': occurredAt,
+    if (resolvedAt != null) 'resolvedAt': resolvedAt,
+    'createdAt': createdAt,
+  };
 }
+

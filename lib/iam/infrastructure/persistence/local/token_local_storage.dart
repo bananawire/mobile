@@ -6,9 +6,13 @@ class TokenLocalStorage {
   static const _userIdKey = 'user_id';
   static const _emailKey = 'email';
 
-  final _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  final FlutterSecureStorage _storage;
+
+  TokenLocalStorage([FlutterSecureStorage? storage])
+      : _storage = storage ??
+            const FlutterSecureStorage(
+              aOptions: AndroidOptions(encryptedSharedPreferences: true),
+            );
 
   Future<void> saveTokens({
     required String accessToken,

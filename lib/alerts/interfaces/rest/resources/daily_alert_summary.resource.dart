@@ -10,9 +10,17 @@ class DailyAlertSummaryResource {
   factory DailyAlertSummaryResource.fromJson(
       Map<String, dynamic> json,
       ) {
+    final rawCount = json['count'];
     return DailyAlertSummaryResource(
       date: (json['date'] ?? '').toString(),
-      count: (json['count'] as num?) ?? num.tryParse(json['count']?.toString() ?? '') ?? 0,
+      count: rawCount is num ? rawCount : num.tryParse(rawCount?.toString() ?? '') ?? 0,
     );
   }
+
+
+  Map<String, dynamic> toJson() => {
+    'date': date,
+    'count': count,
+  };
 }
+

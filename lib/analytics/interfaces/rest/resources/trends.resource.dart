@@ -26,6 +26,15 @@ class TrendDataPointResource {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+    'timestamp': timestamp,
+    'aqiValue': aqiValue,
+    'co2': co2,
+    'pm2_5': pm2_5,
+    'temperature': temperature,
+    'humidity': humidity,
+  };
+
   static double _asDouble(Object? value) {
     if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '') ?? 0;
@@ -49,4 +58,9 @@ class TrendsResource {
     }
     return TrendsResource(dataPoints: points);
   }
+
+  Map<String, dynamic> toJson() => {
+    'dataPoints': dataPoints.map((point) => point.toJson()).toList(),
+  };
 }
+

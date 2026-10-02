@@ -1,3 +1,6 @@
+import 'package:mobile/evaluation/domain/model/readmodels/telemetry_evaluation.read_model.dart';
+import 'package:mobile/evaluation/domain/model/valueobjects/connectivity.valueobject.dart';
+
 class TelemetryEvaluationResponseResource {
   final String id;
   final String deviceId;
@@ -31,6 +34,28 @@ class TelemetryEvaluationResponseResource {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'deviceId': deviceId,
+    'uptime': uptime,
+    'connectivity': connectivity.toJson(),
+    'healthStatus': healthStatus,
+    'status': status,
+    'recordedAt': recordedAt.toIso8601String(),
+  };
+
+  TelemetryEvaluationReadModel toDomain() {
+    return TelemetryEvaluationReadModel(
+      id: id,
+      deviceId: deviceId,
+      uptimeSeconds: uptime,
+      connectivity: connectivity.toDomain(),
+      healthStatus: healthStatus,
+      status: status,
+      recordedAt: recordedAt,
+    );
+  }
+
   static int _asInt(Object? value) {
     if (value is int) return value;
     if (value is num) return value.toInt();
@@ -58,4 +83,19 @@ class ConnectivityResponseResource {
       signalStrength: signalStrength,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'status': status,
+    'network': network,
+    'signalStrength': signalStrength,
+  };
+
+  Connectivity toDomain() {
+    return Connectivity(
+      status: status,
+      network: network,
+      signalStrength: signalStrength,
+    );
+  }
 }
+

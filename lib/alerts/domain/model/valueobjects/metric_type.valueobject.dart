@@ -10,6 +10,7 @@ enum MetricType {
   const MetricType(this.label, this.unit);
 
   String get apiName => name.toUpperCase();
+  String get apiValue => apiName;
 
   static MetricType? fromString(String value) {
     try {

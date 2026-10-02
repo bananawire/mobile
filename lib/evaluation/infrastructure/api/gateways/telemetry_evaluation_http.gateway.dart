@@ -17,4 +17,8 @@ class TelemetryEvaluationHttpGateway implements TelemetryEvaluationGateway {
     if (data is Map<String, dynamic>) return data;
     throw Exception('Unexpected latest evaluation response format');
   }
+
+  @override
+  Future<Map<String, dynamic>> getLatestTelemetryEvaluationByDevice(String deviceId) =>
+      getLatestByDeviceRaw(deviceId);
 }

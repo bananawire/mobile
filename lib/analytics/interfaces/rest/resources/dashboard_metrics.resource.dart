@@ -41,6 +41,20 @@ class DashboardMetricsResource {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+    'aqiValue': aqiValue,
+    'aqiCategory': aqiCategory,
+    'averageCo2': averageCo2,
+    'averagePm2_5': averagePm2_5,
+    'averageTemperature': averageTemperature,
+    'averageHumidity': averageHumidity,
+    'co2DeltaPercentage': co2DeltaPercentage,
+    'pm2_5DeltaPercentage': pm2_5DeltaPercentage,
+    'temperatureDeltaPercentage': temperatureDeltaPercentage,
+    'humidityDeltaPercentage': humidityDeltaPercentage,
+    'calculatedAt': calculatedAt,
+  };
+
   static double _asDouble(Object? value) {
     if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '') ?? 0;

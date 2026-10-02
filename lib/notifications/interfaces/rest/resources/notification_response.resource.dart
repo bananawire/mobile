@@ -34,4 +34,18 @@ class NotificationResponseResource {
       updatedAt: (json['updatedAt'] ?? '').toString(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'alertId': alertId,
+      'title': title,
+      'message': message,
+      'sent': sent,
+      'errorMessage': errorMessage,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
 }

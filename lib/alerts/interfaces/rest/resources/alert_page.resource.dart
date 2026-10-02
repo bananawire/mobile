@@ -36,4 +36,13 @@ class AlertPageResource {
       number: (json['number'] as num?)?.toInt() ?? 0,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'content': content.map((e) => e.toJson()).toList(),
+    'totalElements': totalElements,
+    'totalPages': totalPages,
+    'size': size,
+    'number': number,
+  };
 }
+
