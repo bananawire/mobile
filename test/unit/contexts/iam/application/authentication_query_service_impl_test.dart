@@ -32,51 +32,61 @@ void main() {
   });
 
   group('AuthenticationQueryServiceImpl - handleVerifyToken', () {
-    test('should return Right with TokenVerificationResource when gateway succeeds', () async {
-      // Arrange
-      const verificationResource = TokenVerificationResource(
-        valid: true,
-        userId: 'verified-user-123',
-        expiresAt: '2026-12-31T23:59:59Z',
-      );
-      when(() => mockGateway.verifyToken('valid-token'))
-          .thenAnswer((_) async => verificationResource);
+    test(
+      'should return Right with TokenVerificationResource when gateway succeeds',
+      () async {
+        // Arrange
+        const verificationResource = TokenVerificationResource(
+          valid: true,
+          userId: 'verified-user-123',
+          expiresAt: '2026-12-31T23:59:59Z',
+        );
+        when(
+          () => mockGateway.verifyToken('valid-token'),
+        ).thenAnswer((_) async => verificationResource);
 
-      final query = VerifyTokenQuery(accessToken: AccessToken('valid-token'));
+        final query = VerifyTokenQuery(accessToken: AccessToken('valid-token'));
 
-      // Act
-      final result = await queryService.handleVerifyToken(query);
+        // Act
+        final result = await queryService.handleVerifyToken(query);
 
-      // Assert
-      expect(result.isRight(), isTrue);
-      result.fold(
-        (failure) => fail('Expected Right'),
-        (resource) {
+        // Assert
+        expect(result.isRight(), isTrue);
+        result.fold((failure) => fail('Expected Right'), (resource) {
           expect(resource.valid, isTrue);
           expect(resource.userId, equals('verified-user-123'));
           expect(resource.expiresAt, equals('2026-12-31T23:59:59Z'));
-        },
-      );
-      verify(() => mockGateway.verifyToken('valid-token')).called(1);
-    });
+        });
+        verify(() => mockGateway.verifyToken('valid-token')).called(1);
+      },
+    );
 
-    test('should return Left with "Session expired. Please sign in again." when status is 401', () async {
-      // Arrange
-      when(() => mockGateway.verifyToken(any()))
-          .thenThrow(createDioException(statusCode: 401));
+    test(
+      'should return Left with "Session expired. Please sign in again." when status is 401',
+      () async {
+        // Arrange
+        when(
+          () => mockGateway.verifyToken(any()),
+        ).thenThrow(createDioException(statusCode: 401));
 
-      final query = VerifyTokenQuery(accessToken: AccessToken('expired-token'));
+        final query = VerifyTokenQuery(
+          accessToken: AccessToken('expired-token'),
+        );
 
-      // Act
-      final result = await queryService.handleVerifyToken(query);
+        // Act
+        final result = await queryService.handleVerifyToken(query);
 
-      // Assert
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) => expect(failure.message, equals('Session expired. Please sign in again.')),
-        (_) => fail('Expected Left'),
-      );
-    });
+        // Assert
+        expect(result.isLeft(), isTrue);
+        result.fold(
+          (failure) => expect(
+            failure.message,
+            equals('Session expired. Please sign in again.'),
+          ),
+          (_) => fail('Expected Left'),
+        );
+      },
+    );
 
     final statusCodesToMessages = {
       400: 'Invalid request.',
@@ -89,29 +99,36 @@ void main() {
     };
 
     for (final entry in statusCodesToMessages.entries) {
-      test('should map DioException status ${entry.key} to "${entry.value}"', () async {
-        // Arrange
-        when(() => mockGateway.verifyToken(any()))
-            .thenThrow(createDioException(statusCode: entry.key));
+      test(
+        'should map DioException status ${entry.key} to "${entry.value}"',
+        () async {
+          // Arrange
+          when(
+            () => mockGateway.verifyToken(any()),
+          ).thenThrow(createDioException(statusCode: entry.key));
 
-        final query = VerifyTokenQuery(accessToken: AccessToken('some-token'));
+          final query = VerifyTokenQuery(
+            accessToken: AccessToken('some-token'),
+          );
 
-        // Act
-        final result = await queryService.handleVerifyToken(query);
+          // Act
+          final result = await queryService.handleVerifyToken(query);
 
-        // Assert
-        expect(result.isLeft(), isTrue);
-        result.fold(
-          (failure) => expect(failure.message, equals(entry.value)),
-          (_) => fail('Expected Left'),
-        );
-      });
+          // Assert
+          expect(result.isLeft(), isTrue);
+          result.fold(
+            (failure) => expect(failure.message, equals(entry.value)),
+            (_) => fail('Expected Left'),
+          );
+        },
+      );
     }
 
     test('should map general Exception to its message', () async {
       // Arrange
-      when(() => mockGateway.verifyToken(any()))
-          .thenThrow(Exception('Token decode failure'));
+      when(
+        () => mockGateway.verifyToken(any()),
+      ).thenThrow(Exception('Token decode failure'));
 
       final query = VerifyTokenQuery(accessToken: AccessToken('corrupt-token'));
 
@@ -126,21 +143,25 @@ void main() {
       );
     });
 
-    test('should map non-exception error to default unexpected error message', () async {
-      // Arrange
-      when(() => mockGateway.verifyToken(any())).thenThrow(42);
+    test(
+      'should map non-exception error to default unexpected error message',
+      () async {
+        // Arrange
+        when(() => mockGateway.verifyToken(any())).thenThrow(42);
 
-      final query = VerifyTokenQuery(accessToken: AccessToken('some-token'));
+        final query = VerifyTokenQuery(accessToken: AccessToken('some-token'));
 
-      // Act
-      final result = await queryService.handleVerifyToken(query);
+        // Act
+        final result = await queryService.handleVerifyToken(query);
 
-      // Assert
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) => expect(failure.message, equals('An unexpected error occurred')),
-        (_) => fail('Expected Left'),
-      );
-    });
+        // Assert
+        expect(result.isLeft(), isTrue);
+        result.fold(
+          (failure) =>
+              expect(failure.message, equals('An unexpected error occurred')),
+          (_) => fail('Expected Left'),
+        );
+      },
+    );
   });
 }

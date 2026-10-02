@@ -48,30 +48,33 @@ void main() {
       expect(resource.createdAt, equals('2026-10-02T10:01:00Z'));
     });
 
-    test('should parse thresholdValue and actualValue when they are string numbers', () {
-      // Arrange
-      final json = {
-        'id': 'alert-002',
-        'deviceId': 'device-002',
-        'metric': 'CO2',
-        'metricLabel': 'CO2',
-        'metricUnit': 'ppm',
-        'thresholdValue': '1000.5',
-        'actualValue': '1250',
-        'message': 'CO2 high',
-        'status': 'WARNING',
-        'severity': 'WARNING',
-        'occurredAt': '2026-10-02T11:00:00Z',
-        'createdAt': '2026-10-02T11:00:00Z',
-      };
+    test(
+      'should parse thresholdValue and actualValue when they are string numbers',
+      () {
+        // Arrange
+        final json = {
+          'id': 'alert-002',
+          'deviceId': 'device-002',
+          'metric': 'CO2',
+          'metricLabel': 'CO2',
+          'metricUnit': 'ppm',
+          'thresholdValue': '1000.5',
+          'actualValue': '1250',
+          'message': 'CO2 high',
+          'status': 'WARNING',
+          'severity': 'WARNING',
+          'occurredAt': '2026-10-02T11:00:00Z',
+          'createdAt': '2026-10-02T11:00:00Z',
+        };
 
-      // Act
-      final resource = AlertResponseResource.fromJson(json);
+        // Act
+        final resource = AlertResponseResource.fromJson(json);
 
-      // Assert
-      expect(resource.thresholdValue, equals(1000.5));
-      expect(resource.actualValue, equals(1250));
-    });
+        // Assert
+        expect(resource.thresholdValue, equals(1000.5));
+        expect(resource.actualValue, equals(1250));
+      },
+    );
 
     test('should handle null optional fields in json', () {
       // Arrange
@@ -151,10 +154,7 @@ void main() {
   group('DailyAlertSummaryResource', () {
     test('should deserialize from json when count is numeric', () {
       // Arrange
-      final json = {
-        'date': '2026-10-02',
-        'count': 12,
-      };
+      final json = {'date': '2026-10-02', 'count': 12};
 
       // Act
       final resource = DailyAlertSummaryResource.fromJson(json);
@@ -166,10 +166,7 @@ void main() {
 
     test('should deserialize from json when count is string', () {
       // Arrange
-      final json = {
-        'date': '2026-10-01',
-        'count': '25',
-      };
+      final json = {'date': '2026-10-01', 'count': '25'};
 
       // Act
       final resource = DailyAlertSummaryResource.fromJson(json);
@@ -193,10 +190,7 @@ void main() {
 
     test('should serialize to json correctly', () {
       // Arrange
-      const resource = DailyAlertSummaryResource(
-        date: '2026-10-02',
-        count: 7,
-      );
+      const resource = DailyAlertSummaryResource(date: '2026-10-02', count: 7);
 
       // Act
       final json = resource.toJson();
@@ -208,42 +202,45 @@ void main() {
   });
 
   group('AlertPageResource', () {
-    test('should deserialize from json with content list and pagination fields', () {
-      // Arrange
-      final json = {
-        'content': [
-          {
-            'id': 'alert-p1',
-            'deviceId': 'device-p1',
-            'metric': 'PM25',
-            'metricLabel': 'PM2.5',
-            'metricUnit': 'µg/m³',
-            'thresholdValue': 25,
-            'actualValue': 40,
-            'message': 'Alert P1',
-            'status': 'ACTIVE',
-            'severity': 'CRITICAL',
-            'occurredAt': '2026-10-02T01:00:00Z',
-            'createdAt': '2026-10-02T01:00:00Z',
-          }
-        ],
-        'totalElements': 45,
-        'totalPages': 5,
-        'size': 10,
-        'number': 0,
-      };
+    test(
+      'should deserialize from json with content list and pagination fields',
+      () {
+        // Arrange
+        final json = {
+          'content': [
+            {
+              'id': 'alert-p1',
+              'deviceId': 'device-p1',
+              'metric': 'PM25',
+              'metricLabel': 'PM2.5',
+              'metricUnit': 'µg/m³',
+              'thresholdValue': 25,
+              'actualValue': 40,
+              'message': 'Alert P1',
+              'status': 'ACTIVE',
+              'severity': 'CRITICAL',
+              'occurredAt': '2026-10-02T01:00:00Z',
+              'createdAt': '2026-10-02T01:00:00Z',
+            },
+          ],
+          'totalElements': 45,
+          'totalPages': 5,
+          'size': 10,
+          'number': 0,
+        };
 
-      // Act
-      final resource = AlertPageResource.fromJson(json);
+        // Act
+        final resource = AlertPageResource.fromJson(json);
 
-      // Assert
-      expect(resource.content.length, equals(1));
-      expect(resource.content.first.id, equals('alert-p1'));
-      expect(resource.totalElements, equals(45));
-      expect(resource.totalPages, equals(5));
-      expect(resource.size, equals(10));
-      expect(resource.number, equals(0));
-    });
+        // Assert
+        expect(resource.content.length, equals(1));
+        expect(resource.content.first.id, equals('alert-p1'));
+        expect(resource.totalElements, equals(45));
+        expect(resource.totalPages, equals(5));
+        expect(resource.size, equals(10));
+        expect(resource.number, equals(0));
+      },
+    );
 
     test('should handle missing or empty content array in json gracefully', () {
       // Arrange

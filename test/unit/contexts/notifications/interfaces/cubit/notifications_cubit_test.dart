@@ -10,9 +10,14 @@ import 'package:mobile/notifications/domain/services/notifications.query-service
 import 'package:mobile/notifications/interfaces/pages/notifications_cubit.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockNotificationsQueryService extends Mock implements NotificationsQueryService {}
+class MockNotificationsQueryService extends Mock
+    implements NotificationsQueryService {}
 
-NotificationLog _createFakeLog({required String id, required String title, bool sent = true}) {
+NotificationLog _createFakeLog({
+  required String id,
+  required String title,
+  bool sent = true,
+}) {
   return NotificationLog(
     id: NotificationId(id),
     userId: 'usr-123',
@@ -39,23 +44,26 @@ void main() {
   });
 
   group('NotificationsCubit - initial state', () {
-    test('should have initial state with default values and unreadCount equal to 0', () {
-      // Arrange & Act
-      final cubit = NotificationsCubit(mockQueryService);
+    test(
+      'should have initial state with default values and unreadCount equal to 0',
+      () {
+        // Arrange & Act
+        final cubit = NotificationsCubit(mockQueryService);
 
-      // Assert
-      expect(cubit.state.isLoading, isFalse);
-      expect(cubit.state.isLoadingMore, isFalse);
-      expect(cubit.state.errorMessage, isNull);
-      expect(cubit.state.notifications, isEmpty);
-      expect(cubit.state.totalElements, equals(0));
-      expect(cubit.state.totalPages, equals(1));
-      expect(cubit.state.currentPage, equals(0));
-      expect(cubit.state.pageSize, equals(20));
-      expect(cubit.state.isLastPage, isTrue);
-      expect(cubit.state.lastSeenElements, equals(0));
-      expect(cubit.state.unreadCount, equals(0));
-    });
+        // Assert
+        expect(cubit.state.isLoading, isFalse);
+        expect(cubit.state.isLoadingMore, isFalse);
+        expect(cubit.state.errorMessage, isNull);
+        expect(cubit.state.notifications, isEmpty);
+        expect(cubit.state.totalElements, equals(0));
+        expect(cubit.state.totalPages, equals(1));
+        expect(cubit.state.currentPage, equals(0));
+        expect(cubit.state.pageSize, equals(20));
+        expect(cubit.state.isLastPage, isTrue);
+        expect(cubit.state.lastSeenElements, equals(0));
+        expect(cubit.state.unreadCount, equals(0));
+      },
+    );
   });
 
   group('NotificationsCubit - loadNotifications', () {
@@ -71,8 +79,9 @@ void main() {
     blocTest<NotificationsCubit, NotificationsState>(
       'should emit loading then success state when loadNotifications succeeds',
       build: () {
-        when(() => mockQueryService.handleGetNotifications(any()))
-            .thenAnswer((_) async => Right(samplePage1));
+        when(
+          () => mockQueryService.handleGetNotifications(any()),
+        ).thenAnswer((_) async => Right(samplePage1));
         return NotificationsCubit(mockQueryService);
       },
       act: (cubit) => cubit.loadNotifications(),
@@ -90,9 +99,17 @@ void main() {
             .having((s) => s.unreadCount, 'unreadCount', 25),
       ],
       verify: (_) {
-        verify(() => mockQueryService.handleGetNotifications(
-          any(that: isA<GetNotificationsQuery>().having((q) => q.page, 'page', 0)),
-        )).called(1);
+        verify(
+          () => mockQueryService.handleGetNotifications(
+            any(
+              that: isA<GetNotificationsQuery>().having(
+                (q) => q.page,
+                'page',
+                0,
+              ),
+            ),
+          ),
+        ).called(1);
       },
     );
 
@@ -106,13 +123,18 @@ void main() {
           size: 20,
           number: 0,
         );
-        when(() => mockQueryService.handleGetNotifications(any()))
-            .thenAnswer((_) async => Right(singlePage));
+        when(
+          () => mockQueryService.handleGetNotifications(any()),
+        ).thenAnswer((_) async => Right(singlePage));
         return NotificationsCubit(mockQueryService);
       },
       act: (cubit) => cubit.loadNotifications(),
       expect: () => [
-        isA<NotificationsState>().having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<NotificationsState>().having(
+          (s) => s.isLoading,
+          'isLoading',
+          isTrue,
+        ),
         isA<NotificationsState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isLastPage, 'isLastPage', isTrue),
@@ -122,8 +144,9 @@ void main() {
     blocTest<NotificationsCubit, NotificationsState>(
       'should emit loading then error state when handleGetNotifications returns Failure',
       build: () {
-        when(() => mockQueryService.handleGetNotifications(any()))
-            .thenAnswer((_) async => const Left(Failure('Failed to fetch notifications')));
+        when(() => mockQueryService.handleGetNotifications(any())).thenAnswer(
+          (_) async => const Left(Failure('Failed to fetch notifications')),
+        );
         return NotificationsCubit(mockQueryService);
       },
       act: (cubit) => cubit.loadNotifications(),
@@ -133,17 +156,22 @@ void main() {
             .having((s) => s.errorMessage, 'errorMessage', isNull),
         isA<NotificationsState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
-            .having((s) => s.errorMessage, 'errorMessage', 'Failed to fetch notifications'),
+            .having(
+              (s) => s.errorMessage,
+              'errorMessage',
+              'Failed to fetch notifications',
+            ),
       ],
     );
 
     test('should ignore loadNotifications call when already loading', () async {
       // Arrange
-      when(() => mockQueryService.handleGetNotifications(any()))
-          .thenAnswer((_) async {
-            await Future.delayed(const Duration(milliseconds: 50));
-            return Right(samplePage1);
-          });
+      when(() => mockQueryService.handleGetNotifications(any())).thenAnswer((
+        _,
+      ) async {
+        await Future.delayed(const Duration(milliseconds: 50));
+        return Right(samplePage1);
+      });
       final cubit = NotificationsCubit(mockQueryService);
 
       // Act
@@ -171,8 +199,9 @@ void main() {
     blocTest<NotificationsCubit, NotificationsState>(
       'should append new notifications and increment page when loadMoreNotifications succeeds',
       build: () {
-        when(() => mockQueryService.handleGetNotifications(any()))
-            .thenAnswer((_) async => Right(page2));
+        when(
+          () => mockQueryService.handleGetNotifications(any()),
+        ).thenAnswer((_) async => Right(page2));
         return NotificationsCubit(mockQueryService);
       },
       seed: () => NotificationsState(
@@ -184,7 +213,11 @@ void main() {
       ),
       act: (cubit) => cubit.loadMoreNotifications(),
       expect: () => [
-        isA<NotificationsState>().having((s) => s.isLoadingMore, 'isLoadingMore', isTrue),
+        isA<NotificationsState>().having(
+          (s) => s.isLoadingMore,
+          'isLoadingMore',
+          isTrue,
+        ),
         isA<NotificationsState>()
             .having((s) => s.isLoadingMore, 'isLoadingMore', isFalse)
             .having((s) => s.notifications.length, 'notifications length', 2)
@@ -194,19 +227,24 @@ void main() {
             .having((s) => s.isLastPage, 'isLastPage', isTrue),
       ],
       verify: (_) {
-        verify(() => mockQueryService.handleGetNotifications(
-          any(that: isA<GetNotificationsQuery>().having((q) => q.page, 'page', 1)),
-        )).called(1);
+        verify(
+          () => mockQueryService.handleGetNotifications(
+            any(
+              that: isA<GetNotificationsQuery>().having(
+                (q) => q.page,
+                'page',
+                1,
+              ),
+            ),
+          ),
+        ).called(1);
       },
     );
 
     blocTest<NotificationsCubit, NotificationsState>(
       'should not call service when isLastPage is true',
       build: () => NotificationsCubit(mockQueryService),
-      seed: () => const NotificationsState(
-        isLastPage: true,
-        currentPage: 0,
-      ),
+      seed: () => const NotificationsState(isLastPage: true, currentPage: 0),
       act: (cubit) => cubit.loadMoreNotifications(),
       expect: () => [],
       verify: (_) {
@@ -217,10 +255,8 @@ void main() {
     blocTest<NotificationsCubit, NotificationsState>(
       'should not call service when isLoadingMore is already true',
       build: () => NotificationsCubit(mockQueryService),
-      seed: () => const NotificationsState(
-        isLoadingMore: true,
-        isLastPage: false,
-      ),
+      seed: () =>
+          const NotificationsState(isLoadingMore: true, isLastPage: false),
       act: (cubit) => cubit.loadMoreNotifications(),
       expect: () => [],
       verify: (_) {
@@ -231,8 +267,9 @@ void main() {
     blocTest<NotificationsCubit, NotificationsState>(
       'should emit error when loadMoreNotifications fails',
       build: () {
-        when(() => mockQueryService.handleGetNotifications(any()))
-            .thenAnswer((_) async => const Left(Failure('Failed to load page 2')));
+        when(
+          () => mockQueryService.handleGetNotifications(any()),
+        ).thenAnswer((_) async => const Left(Failure('Failed to load page 2')));
         return NotificationsCubit(mockQueryService);
       },
       seed: () => NotificationsState(
@@ -244,11 +281,23 @@ void main() {
       ),
       act: (cubit) => cubit.loadMoreNotifications(),
       expect: () => [
-        isA<NotificationsState>().having((s) => s.isLoadingMore, 'isLoadingMore', isTrue),
+        isA<NotificationsState>().having(
+          (s) => s.isLoadingMore,
+          'isLoadingMore',
+          isTrue,
+        ),
         isA<NotificationsState>()
             .having((s) => s.isLoadingMore, 'isLoadingMore', isFalse)
-            .having((s) => s.errorMessage, 'errorMessage', 'Failed to load page 2')
-            .having((s) => s.notifications.length, 'preserved notifications', 1),
+            .having(
+              (s) => s.errorMessage,
+              'errorMessage',
+              'Failed to load page 2',
+            )
+            .having(
+              (s) => s.notifications.length,
+              'preserved notifications',
+              1,
+            ),
       ],
     );
   });
@@ -266,8 +315,9 @@ void main() {
     blocTest<NotificationsCubit, NotificationsState>(
       'should replace existing list when loadNotifications is called with isRefresh: true',
       build: () {
-        when(() => mockQueryService.handleGetNotifications(any()))
-            .thenAnswer((_) async => Right(refreshedPage));
+        when(
+          () => mockQueryService.handleGetNotifications(any()),
+        ).thenAnswer((_) async => Right(refreshedPage));
         return NotificationsCubit(mockQueryService);
       },
       seed: () => NotificationsState(
@@ -277,8 +327,11 @@ void main() {
       ),
       act: (cubit) => cubit.loadNotifications(isRefresh: true),
       expect: () => [
-        isA<NotificationsState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<NotificationsState>().having(
+          (s) => s.isLoading,
+          'isLoading',
+          isTrue,
+        ),
         isA<NotificationsState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.notifications.length, 'notifications length', 1)
@@ -290,57 +343,66 @@ void main() {
   });
 
   group('NotificationsCubit - markAllAsSeen and reset', () {
-    test('should update lastSeenElements to totalElements and reduce unreadCount to 0', () {
-      // Arrange
-      final cubit = NotificationsCubit(mockQueryService);
-      cubit.emit(const NotificationsState(
-        totalElements: 8,
-        lastSeenElements: 2,
-      ));
-      expect(cubit.state.unreadCount, equals(6));
+    test(
+      'should update lastSeenElements to totalElements and reduce unreadCount to 0',
+      () {
+        // Arrange
+        final cubit = NotificationsCubit(mockQueryService);
+        cubit.emit(
+          const NotificationsState(totalElements: 8, lastSeenElements: 2),
+        );
+        expect(cubit.state.unreadCount, equals(6));
 
-      // Act
-      cubit.markAllAsSeen();
+        // Act
+        cubit.markAllAsSeen();
 
-      // Assert
-      expect(cubit.state.lastSeenElements, equals(8));
-      expect(cubit.state.unreadCount, equals(0));
-    });
+        // Assert
+        expect(cubit.state.lastSeenElements, equals(8));
+        expect(cubit.state.unreadCount, equals(0));
+      },
+    );
 
-    test('should do nothing when lastSeenElements is already equal to totalElements', () {
-      // Arrange
-      final cubit = NotificationsCubit(mockQueryService);
-      cubit.emit(const NotificationsState(
-        totalElements: 5,
-        lastSeenElements: 5,
-      ));
+    test(
+      'should do nothing when lastSeenElements is already equal to totalElements',
+      () {
+        // Arrange
+        final cubit = NotificationsCubit(mockQueryService);
+        cubit.emit(
+          const NotificationsState(totalElements: 5, lastSeenElements: 5),
+        );
 
-      // Act
-      cubit.markAllAsSeen();
+        // Act
+        cubit.markAllAsSeen();
 
-      // Assert
-      expect(cubit.state.lastSeenElements, equals(5));
-      expect(cubit.state.unreadCount, equals(0));
-    });
+        // Assert
+        expect(cubit.state.lastSeenElements, equals(5));
+        expect(cubit.state.unreadCount, equals(0));
+      },
+    );
 
-    test('should reset state back to default NotificationsState when reset() is called', () {
-      // Arrange
-      final cubit = NotificationsCubit(mockQueryService);
-      cubit.emit(NotificationsState(
-        notifications: [_createFakeLog(id: 'n-1', title: 'T')],
-        totalElements: 10,
-        currentPage: 2,
-        errorMessage: 'Something broke',
-      ));
+    test(
+      'should reset state back to default NotificationsState when reset() is called',
+      () {
+        // Arrange
+        final cubit = NotificationsCubit(mockQueryService);
+        cubit.emit(
+          NotificationsState(
+            notifications: [_createFakeLog(id: 'n-1', title: 'T')],
+            totalElements: 10,
+            currentPage: 2,
+            errorMessage: 'Something broke',
+          ),
+        );
 
-      // Act
-      cubit.reset();
+        // Act
+        cubit.reset();
 
-      // Assert
-      expect(cubit.state.notifications, isEmpty);
-      expect(cubit.state.totalElements, equals(0));
-      expect(cubit.state.currentPage, equals(0));
-      expect(cubit.state.errorMessage, isNull);
-    });
+        // Assert
+        expect(cubit.state.notifications, isEmpty);
+        expect(cubit.state.totalElements, equals(0));
+        expect(cubit.state.currentPage, equals(0));
+        expect(cubit.state.errorMessage, isNull);
+      },
+    );
   });
 }

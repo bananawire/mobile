@@ -7,8 +7,11 @@ import 'package:mobile/iam/domain/services/authentication.command-service.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
 
-class MockAuthenticationCommandService extends Mock implements AuthenticationCommandService {}
+class MockAuthenticationCommandService extends Mock
+    implements AuthenticationCommandService {}
+
 class MockTokenLocalStorage extends Mock implements TokenLocalStorage {}
+
 class FakeSignOutCommand extends Fake implements SignOutCommand {}
 
 void main() {
@@ -25,17 +28,24 @@ void main() {
   });
 
   group('SettingsCubit', () {
-    test('should have initial state with isLoading false and isAuthenticated true', () {
-      final cubit = SettingsCubit(mockCommandService, mockLocalStorage);
-      expect(cubit.state.isLoading, isFalse);
-      expect(cubit.state.isAuthenticated, isTrue);
-    });
+    test(
+      'should have initial state with isLoading false and isAuthenticated true',
+      () {
+        final cubit = SettingsCubit(mockCommandService, mockLocalStorage);
+        expect(cubit.state.isLoading, isFalse);
+        expect(cubit.state.isAuthenticated, isTrue);
+      },
+    );
 
     blocTest<SettingsCubit, SettingsState>(
       'should call handleSignOut and clearAll when token is present',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => 'stored-access-token');
-        when(() => mockCommandService.handleSignOut(any())).thenAnswer((_) async => const Right(unit));
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => 'stored-access-token');
+        when(
+          () => mockCommandService.handleSignOut(any()),
+        ).thenAnswer((_) async => const Right(unit));
         when(() => mockLocalStorage.clearAll()).thenAnswer((_) async {});
         return SettingsCubit(mockCommandService, mockLocalStorage);
       },
@@ -58,14 +68,15 @@ void main() {
     blocTest<SettingsCubit, SettingsState>(
       'should skip handleSignOut and clearAll when token is null',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => null);
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => null);
         when(() => mockLocalStorage.clearAll()).thenAnswer((_) async {});
         return SettingsCubit(mockCommandService, mockLocalStorage);
       },
       act: (cubit) => cubit.signOut(),
       expect: () => [
-        isA<SettingsState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<SettingsState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<SettingsState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isFalse),
@@ -80,14 +91,15 @@ void main() {
     blocTest<SettingsCubit, SettingsState>(
       'should skip handleSignOut and clearAll when token is empty',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => '');
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => '');
         when(() => mockLocalStorage.clearAll()).thenAnswer((_) async {});
         return SettingsCubit(mockCommandService, mockLocalStorage);
       },
       act: (cubit) => cubit.signOut(),
       expect: () => [
-        isA<SettingsState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<SettingsState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<SettingsState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isFalse),

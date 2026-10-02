@@ -3,24 +3,21 @@ import 'package:mobile/alerts/domain/model/valueobjects/daily_alert_count.valueo
 
 void main() {
   group('DailyAlertCount ValueObject', () {
-    test('should construct DailyAlertCount with required date and count fields', () {
-      // Arrange & Act
-      const summary = DailyAlertCount(
-        date: '2026-10-02',
-        count: 5,
-      );
+    test(
+      'should construct DailyAlertCount with required date and count fields',
+      () {
+        // Arrange & Act
+        const summary = DailyAlertCount(date: '2026-10-02', count: 5);
 
-      // Assert
-      expect(summary.date, equals('2026-10-02'));
-      expect(summary.count, equals(5));
-    });
+        // Assert
+        expect(summary.date, equals('2026-10-02'));
+        expect(summary.count, equals(5));
+      },
+    );
 
     test('should allow zero count when constructing DailyAlertCount', () {
       // Arrange & Act
-      const summary = DailyAlertCount(
-        date: '2026-10-01',
-        count: 0,
-      );
+      const summary = DailyAlertCount(date: '2026-10-01', count: 0);
 
       // Assert
       expect(summary.date, equals('2026-10-01'));

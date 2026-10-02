@@ -22,32 +22,35 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'email': 'test@example.com',
-        'password': 'Password123!',
-      }));
+      expect(
+        json,
+        equals({'email': 'test@example.com', 'password': 'Password123!'}),
+      );
     });
   });
 
   group('AuthenticatedUserResource', () {
-    test('should deserialize correctly from json map when fromJson is called', () {
-      // Arrange
-      final json = {
-        'id': '123e4567-e89b-12d3-a456-426614174000',
-        'email': 'user@example.com',
-        'token': 'access-token-123',
-        'refreshToken': 'refresh-token-456',
-      };
+    test(
+      'should deserialize correctly from json map when fromJson is called',
+      () {
+        // Arrange
+        final json = {
+          'id': '123e4567-e89b-12d3-a456-426614174000',
+          'email': 'user@example.com',
+          'token': 'access-token-123',
+          'refreshToken': 'refresh-token-456',
+        };
 
-      // Act
-      final resource = AuthenticatedUserResource.fromJson(json);
+        // Act
+        final resource = AuthenticatedUserResource.fromJson(json);
 
-      // Assert
-      expect(resource.id, equals('123e4567-e89b-12d3-a456-426614174000'));
-      expect(resource.email, equals('user@example.com'));
-      expect(resource.token, equals('access-token-123'));
-      expect(resource.refreshToken, equals('refresh-token-456'));
-    });
+        // Assert
+        expect(resource.id, equals('123e4567-e89b-12d3-a456-426614174000'));
+        expect(resource.email, equals('user@example.com'));
+        expect(resource.token, equals('access-token-123'));
+        expect(resource.refreshToken, equals('refresh-token-456'));
+      },
+    );
 
     test('should serialize correctly to json map when toJson is called', () {
       // Arrange
@@ -62,12 +65,15 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'id': '123e4567-e89b-12d3-a456-426614174000',
-        'email': 'user@example.com',
-        'token': 'access-token-123',
-        'refreshToken': 'refresh-token-456',
-      }));
+      expect(
+        json,
+        equals({
+          'id': '123e4567-e89b-12d3-a456-426614174000',
+          'email': 'user@example.com',
+          'token': 'access-token-123',
+          'refreshToken': 'refresh-token-456',
+        }),
+      );
     });
   });
 
@@ -83,10 +89,10 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'email': 'register@example.com',
-        'password': 'Password123!',
-      }));
+      expect(
+        json,
+        equals({'email': 'register@example.com', 'password': 'Password123!'}),
+      );
     });
   });
 
@@ -102,10 +108,13 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'sessionId': 'session-id-123',
-        'verificationCode': 'CODE-1234',
-      }));
+      expect(
+        json,
+        equals({
+          'sessionId': 'session-id-123',
+          'verificationCode': 'CODE-1234',
+        }),
+      );
     });
   });
 
@@ -123,20 +132,23 @@ void main() {
   });
 
   group('RegistrationInitiatedResource', () {
-    test('should deserialize correctly from json map when fromJson is called', () {
-      // Arrange
-      final json = {
-        'sessionId': 'session-123',
-        'message': 'Registration initiated successfully',
-      };
+    test(
+      'should deserialize correctly from json map when fromJson is called',
+      () {
+        // Arrange
+        final json = {
+          'sessionId': 'session-123',
+          'message': 'Registration initiated successfully',
+        };
 
-      // Act
-      final resource = RegistrationInitiatedResource.fromJson(json);
+        // Act
+        final resource = RegistrationInitiatedResource.fromJson(json);
 
-      // Assert
-      expect(resource.sessionId, equals('session-123'));
-      expect(resource.message, equals('Registration initiated successfully'));
-    });
+        // Assert
+        expect(resource.sessionId, equals('session-123'));
+        expect(resource.message, equals('Registration initiated successfully'));
+      },
+    );
 
     test('should serialize correctly to json map when toJson is called', () {
       // Arrange
@@ -149,38 +161,40 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'sessionId': 'session-123',
-        'message': 'Registration initiated successfully',
-      }));
+      expect(
+        json,
+        equals({
+          'sessionId': 'session-123',
+          'message': 'Registration initiated successfully',
+        }),
+      );
     });
   });
 
   group('TokenVerificationResource', () {
-    test('should deserialize correctly from json map with all fields present', () {
-      // Arrange
-      final json = {
-        'valid': true,
-        'userId': 'user-123',
-        'expiresAt': '2026-12-31T23:59:59Z',
-      };
+    test(
+      'should deserialize correctly from json map with all fields present',
+      () {
+        // Arrange
+        final json = {
+          'valid': true,
+          'userId': 'user-123',
+          'expiresAt': '2026-12-31T23:59:59Z',
+        };
 
-      // Act
-      final resource = TokenVerificationResource.fromJson(json);
+        // Act
+        final resource = TokenVerificationResource.fromJson(json);
 
-      // Assert
-      expect(resource.valid, isTrue);
-      expect(resource.userId, equals('user-123'));
-      expect(resource.expiresAt, equals('2026-12-31T23:59:59Z'));
-    });
+        // Assert
+        expect(resource.valid, isTrue);
+        expect(resource.userId, equals('user-123'));
+        expect(resource.expiresAt, equals('2026-12-31T23:59:59Z'));
+      },
+    );
 
     test('should deserialize correctly when optional fields are null', () {
       // Arrange
-      final json = {
-        'valid': false,
-        'userId': null,
-        'expiresAt': null,
-      };
+      final json = {'valid': false, 'userId': null, 'expiresAt': null};
 
       // Act
       final resource = TokenVerificationResource.fromJson(json);
@@ -203,29 +217,32 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'valid': true,
-        'userId': 'user-123',
-        'expiresAt': '2026-12-31T23:59:59Z',
-      }));
+      expect(
+        json,
+        equals({
+          'valid': true,
+          'userId': 'user-123',
+          'expiresAt': '2026-12-31T23:59:59Z',
+        }),
+      );
     });
   });
 
   group('UserResource', () {
-    test('should deserialize correctly from json map when fromJson is called', () {
-      // Arrange
-      final json = {
-        'id': 'user-uuid-123',
-        'email': 'user@example.com',
-      };
+    test(
+      'should deserialize correctly from json map when fromJson is called',
+      () {
+        // Arrange
+        final json = {'id': 'user-uuid-123', 'email': 'user@example.com'};
 
-      // Act
-      final resource = UserResource.fromJson(json);
+        // Act
+        final resource = UserResource.fromJson(json);
 
-      // Assert
-      expect(resource.id, equals('user-uuid-123'));
-      expect(resource.email, equals('user@example.com'));
-    });
+        // Assert
+        expect(resource.id, equals('user-uuid-123'));
+        expect(resource.email, equals('user@example.com'));
+      },
+    );
 
     test('should serialize correctly to json map when toJson is called', () {
       // Arrange
@@ -238,10 +255,10 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'id': 'user-uuid-123',
-        'email': 'user@example.com',
-      }));
+      expect(
+        json,
+        equals({'id': 'user-uuid-123', 'email': 'user@example.com'}),
+      );
     });
   });
 

@@ -14,35 +14,44 @@ import 'package:mobile/iam/interfaces/rest/transform/authentication_transform.da
 
 void main() {
   group('AuthenticationTransform', () {
-    test('should map InitiateRegistrationCommand to InitiateRegistrationRequestResource', () {
-      // Arrange
-      final command = InitiateRegistrationCommand(
-        email: EmailAddress('user@example.com'),
-        password: Password('Secret123!'),
-      );
+    test(
+      'should map InitiateRegistrationCommand to InitiateRegistrationRequestResource',
+      () {
+        // Arrange
+        final command = InitiateRegistrationCommand(
+          email: EmailAddress('user@example.com'),
+          password: Password('Secret123!'),
+        );
 
-      // Act
-      final resource = toInitiateRegistrationResource(command);
+        // Act
+        final resource = toInitiateRegistrationResource(command);
 
-      // Assert
-      expect(resource.email, equals('user@example.com'));
-      expect(resource.password, equals('Secret123!'));
-    });
+        // Assert
+        expect(resource.email, equals('user@example.com'));
+        expect(resource.password, equals('Secret123!'));
+      },
+    );
 
-    test('should map ConfirmRegistrationCommand to ConfirmRegistrationRequestResource', () {
-      // Arrange
-      final command = ConfirmRegistrationCommand(
-        sessionId: SessionId('123e4567-e89b-12d3-a456-426614174000'),
-        verificationCode: VerificationCode('1A2B-3C4D'),
-      );
+    test(
+      'should map ConfirmRegistrationCommand to ConfirmRegistrationRequestResource',
+      () {
+        // Arrange
+        final command = ConfirmRegistrationCommand(
+          sessionId: SessionId('123e4567-e89b-12d3-a456-426614174000'),
+          verificationCode: VerificationCode('1A2B-3C4D'),
+        );
 
-      // Act
-      final resource = toConfirmRegistrationResource(command);
+        // Act
+        final resource = toConfirmRegistrationResource(command);
 
-      // Assert
-      expect(resource.sessionId, equals('123e4567-e89b-12d3-a456-426614174000'));
-      expect(resource.verificationCode, equals('1A2B-3C4D'));
-    });
+        // Assert
+        expect(
+          resource.sessionId,
+          equals('123e4567-e89b-12d3-a456-426614174000'),
+        );
+        expect(resource.verificationCode, equals('1A2B-3C4D'));
+      },
+    );
 
     test('should map SignInCommand to SignInRequestResource', () {
       // Arrange
@@ -72,17 +81,20 @@ void main() {
       expect(resource.refreshToken, equals('ref-tok-999'));
     });
 
-    test('should map AuthenticateWithGoogleCommand to GoogleSignInRequestResource', () {
-      // Arrange
-      final command = AuthenticateWithGoogleCommand(
-        idToken: GoogleIdToken('google-id-token-abc'),
-      );
+    test(
+      'should map AuthenticateWithGoogleCommand to GoogleSignInRequestResource',
+      () {
+        // Arrange
+        final command = AuthenticateWithGoogleCommand(
+          idToken: GoogleIdToken('google-id-token-abc'),
+        );
 
-      // Act
-      final resource = toGoogleSignInResource(command);
+        // Act
+        final resource = toGoogleSignInResource(command);
 
-      // Assert
-      expect(resource.idToken, equals('google-id-token-abc'));
-    });
+        // Assert
+        expect(resource.idToken, equals('google-id-token-abc'));
+      },
+    );
   });
 }

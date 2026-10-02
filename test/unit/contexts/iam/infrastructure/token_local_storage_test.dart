@@ -17,10 +17,18 @@ void main() {
   group('TokenLocalStorage', () {
     test('should save access and refresh tokens to secure storage', () async {
       // Arrange
-      when(() => mockStorage.write(key: 'access_token', value: 'sample-access-token'))
-          .thenAnswer((_) async {});
-      when(() => mockStorage.write(key: 'refresh_token', value: 'sample-refresh-token'))
-          .thenAnswer((_) async {});
+      when(
+        () => mockStorage.write(
+          key: 'access_token',
+          value: 'sample-access-token',
+        ),
+      ).thenAnswer((_) async {});
+      when(
+        () => mockStorage.write(
+          key: 'refresh_token',
+          value: 'sample-refresh-token',
+        ),
+      ).thenAnswer((_) async {});
 
       // Act
       await tokenLocalStorage.saveTokens(
@@ -29,14 +37,25 @@ void main() {
       );
 
       // Assert
-      verify(() => mockStorage.write(key: 'access_token', value: 'sample-access-token')).called(1);
-      verify(() => mockStorage.write(key: 'refresh_token', value: 'sample-refresh-token')).called(1);
+      verify(
+        () => mockStorage.write(
+          key: 'access_token',
+          value: 'sample-access-token',
+        ),
+      ).called(1);
+      verify(
+        () => mockStorage.write(
+          key: 'refresh_token',
+          value: 'sample-refresh-token',
+        ),
+      ).called(1);
     });
 
     test('should return access token when getAccessToken is called', () async {
       // Arrange
-      when(() => mockStorage.read(key: 'access_token'))
-          .thenAnswer((_) async => 'stored-access-token');
+      when(
+        () => mockStorage.read(key: 'access_token'),
+      ).thenAnswer((_) async => 'stored-access-token');
 
       // Act
       final result = await tokenLocalStorage.getAccessToken();
@@ -48,7 +67,9 @@ void main() {
 
     test('should return null when getAccessToken finds no token', () async {
       // Arrange
-      when(() => mockStorage.read(key: 'access_token')).thenAnswer((_) async => null);
+      when(
+        () => mockStorage.read(key: 'access_token'),
+      ).thenAnswer((_) async => null);
 
       // Act
       final result = await tokenLocalStorage.getAccessToken();
@@ -57,25 +78,31 @@ void main() {
       expect(result, isNull);
     });
 
-    test('should return refresh token when getRefreshToken is called', () async {
-      // Arrange
-      when(() => mockStorage.read(key: 'refresh_token'))
-          .thenAnswer((_) async => 'stored-refresh-token');
+    test(
+      'should return refresh token when getRefreshToken is called',
+      () async {
+        // Arrange
+        when(
+          () => mockStorage.read(key: 'refresh_token'),
+        ).thenAnswer((_) async => 'stored-refresh-token');
 
-      // Act
-      final result = await tokenLocalStorage.getRefreshToken();
+        // Act
+        final result = await tokenLocalStorage.getRefreshToken();
 
-      // Assert
-      expect(result, equals('stored-refresh-token'));
-      verify(() => mockStorage.read(key: 'refresh_token')).called(1);
-    });
+        // Assert
+        expect(result, equals('stored-refresh-token'));
+        verify(() => mockStorage.read(key: 'refresh_token')).called(1);
+      },
+    );
 
     test('should save userId and email to secure storage', () async {
       // Arrange
-      when(() => mockStorage.write(key: 'user_id', value: 'user-uuid-123'))
-          .thenAnswer((_) async {});
-      when(() => mockStorage.write(key: 'email', value: 'user@example.com'))
-          .thenAnswer((_) async {});
+      when(
+        () => mockStorage.write(key: 'user_id', value: 'user-uuid-123'),
+      ).thenAnswer((_) async {});
+      when(
+        () => mockStorage.write(key: 'email', value: 'user@example.com'),
+      ).thenAnswer((_) async {});
 
       // Act
       await tokenLocalStorage.saveUser(
@@ -84,13 +111,19 @@ void main() {
       );
 
       // Assert
-      verify(() => mockStorage.write(key: 'user_id', value: 'user-uuid-123')).called(1);
-      verify(() => mockStorage.write(key: 'email', value: 'user@example.com')).called(1);
+      verify(
+        () => mockStorage.write(key: 'user_id', value: 'user-uuid-123'),
+      ).called(1);
+      verify(
+        () => mockStorage.write(key: 'email', value: 'user@example.com'),
+      ).called(1);
     });
 
     test('should return userId when getUserId is called', () async {
       // Arrange
-      when(() => mockStorage.read(key: 'user_id')).thenAnswer((_) async => 'user-uuid-123');
+      when(
+        () => mockStorage.read(key: 'user_id'),
+      ).thenAnswer((_) async => 'user-uuid-123');
 
       // Act
       final result = await tokenLocalStorage.getUserId();
@@ -102,7 +135,9 @@ void main() {
 
     test('should return email when getEmail is called', () async {
       // Arrange
-      when(() => mockStorage.read(key: 'email')).thenAnswer((_) async => 'user@example.com');
+      when(
+        () => mockStorage.read(key: 'email'),
+      ).thenAnswer((_) async => 'user@example.com');
 
       // Act
       final result = await tokenLocalStorage.getEmail();
@@ -114,8 +149,12 @@ void main() {
 
     test('should clear all tokens and user info from secure storage', () async {
       // Arrange
-      when(() => mockStorage.delete(key: 'access_token')).thenAnswer((_) async {});
-      when(() => mockStorage.delete(key: 'refresh_token')).thenAnswer((_) async {});
+      when(
+        () => mockStorage.delete(key: 'access_token'),
+      ).thenAnswer((_) async {});
+      when(
+        () => mockStorage.delete(key: 'refresh_token'),
+      ).thenAnswer((_) async {});
       when(() => mockStorage.delete(key: 'user_id')).thenAnswer((_) async {});
       when(() => mockStorage.delete(key: 'email')).thenAnswer((_) async {});
 
@@ -129,21 +168,27 @@ void main() {
       verify(() => mockStorage.delete(key: 'email')).called(1);
     });
 
-    test('should return true for hasToken when accessToken exists and is non-empty', () async {
-      // Arrange
-      when(() => mockStorage.read(key: 'access_token'))
-          .thenAnswer((_) async => 'valid-access-token');
+    test(
+      'should return true for hasToken when accessToken exists and is non-empty',
+      () async {
+        // Arrange
+        when(
+          () => mockStorage.read(key: 'access_token'),
+        ).thenAnswer((_) async => 'valid-access-token');
 
-      // Act
-      final result = await tokenLocalStorage.hasToken();
+        // Act
+        final result = await tokenLocalStorage.hasToken();
 
-      // Assert
-      expect(result, isTrue);
-    });
+        // Assert
+        expect(result, isTrue);
+      },
+    );
 
     test('should return false for hasToken when accessToken is null', () async {
       // Arrange
-      when(() => mockStorage.read(key: 'access_token')).thenAnswer((_) async => null);
+      when(
+        () => mockStorage.read(key: 'access_token'),
+      ).thenAnswer((_) async => null);
 
       // Act
       final result = await tokenLocalStorage.hasToken();
@@ -152,15 +197,20 @@ void main() {
       expect(result, isFalse);
     });
 
-    test('should return false for hasToken when accessToken is empty', () async {
-      // Arrange
-      when(() => mockStorage.read(key: 'access_token')).thenAnswer((_) async => '');
+    test(
+      'should return false for hasToken when accessToken is empty',
+      () async {
+        // Arrange
+        when(
+          () => mockStorage.read(key: 'access_token'),
+        ).thenAnswer((_) async => '');
 
-      // Act
-      final result = await tokenLocalStorage.hasToken();
+        // Act
+        final result = await tokenLocalStorage.hasToken();
 
-      // Assert
-      expect(result, isFalse);
-    });
+        // Assert
+        expect(result, isFalse);
+      },
+    );
   });
 }

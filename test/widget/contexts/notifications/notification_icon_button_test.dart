@@ -19,8 +19,9 @@ void main() {
   setUp(() {
     mockCubit = MockNotificationsCubit();
     when(() => mockCubit.state).thenReturn(const NotificationsState());
-    when(() => mockCubit.loadNotifications(isRefresh: any(named: 'isRefresh')))
-        .thenAnswer((_) async {});
+    when(
+      () => mockCubit.loadNotifications(isRefresh: any(named: 'isRefresh')),
+    ).thenAnswer((_) async {});
 
     if (getIt.isRegistered<NotificationsCubit>()) {
       getIt.unregister<NotificationsCubit>();
@@ -35,7 +36,9 @@ void main() {
   });
 
   group('NotificationIconButton', () {
-    testWidgets('should render icon button with notifications_none icon', (tester) async {
+    testWidgets('should render icon button with notifications_none icon', (
+      tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         buildTestableWidget(const NotificationIconButton()),
@@ -47,18 +50,23 @@ void main() {
       expect(find.byIcon(Icons.notifications_none), findsOneWidget);
     });
 
-    testWidgets('should trigger loadNotifications on post frame callback when mounted', (tester) async {
-      // Arrange & Act
-      await tester.pumpWidget(
-        buildTestableWidget(const NotificationIconButton()),
-      );
-      await tester.pump();
+    testWidgets(
+      'should trigger loadNotifications on post frame callback when mounted',
+      (tester) async {
+        // Arrange & Act
+        await tester.pumpWidget(
+          buildTestableWidget(const NotificationIconButton()),
+        );
+        await tester.pump();
 
-      // Assert
-      verify(() => mockCubit.loadNotifications()).called(1);
-    });
+        // Assert
+        verify(() => mockCubit.loadNotifications()).called(1);
+      },
+    );
 
-    testWidgets('should not display badge counter when unread count is 0', (tester) async {
+    testWidgets('should not display badge counter when unread count is 0', (
+      tester,
+    ) async {
       // Arrange
       when(() => mockCubit.state).thenReturn(
         const NotificationsState(totalElements: 5, lastSeenElements: 5),
@@ -79,107 +87,111 @@ void main() {
       expect(find.text('0'), findsNothing);
     });
 
-    testWidgets('should display badge counter when unread count is greater than 0', (tester) async {
-      // Arrange
-      when(() => mockCubit.state).thenReturn(
-        const NotificationsState(totalElements: 7, lastSeenElements: 3),
-      );
+    testWidgets(
+      'should display badge counter when unread count is greater than 0',
+      (tester) async {
+        // Arrange
+        when(() => mockCubit.state).thenReturn(
+          const NotificationsState(totalElements: 7, lastSeenElements: 3),
+        );
 
-      // Act
-      await tester.pumpWidget(
-        buildTestableWidget(const NotificationIconButton()),
-      );
-      await tester.pump();
+        // Act
+        await tester.pumpWidget(
+          buildTestableWidget(const NotificationIconButton()),
+        );
+        await tester.pump();
 
-      // Assert
-      final badgeFinder = find.byType(Badge);
-      expect(badgeFinder, findsOneWidget);
+        // Assert
+        final badgeFinder = find.byType(Badge);
+        expect(badgeFinder, findsOneWidget);
 
-      final badge = tester.widget<Badge>(badgeFinder);
-      expect(badge.isLabelVisible, isTrue);
-      expect(find.text('4'), findsOneWidget);
-    });
+        final badge = tester.widget<Badge>(badgeFinder);
+        expect(badge.isLabelVisible, isTrue);
+        expect(find.text('4'), findsOneWidget);
+      },
+    );
 
-    testWidgets('should navigate to /notifications when tapped from a different route', (tester) async {
-      // Arrange
-      var navigatedToNotifications = false;
+    testWidgets(
+      'should navigate to /notifications when tapped from a different route',
+      (tester) async {
+        // Arrange
+        var navigatedToNotifications = false;
 
-      final router = GoRouter(
-        initialLocation: '/',
-        routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const Scaffold(
-              body: NotificationIconButton(),
+        final router = GoRouter(
+          initialLocation: '/',
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) =>
+                  const Scaffold(body: NotificationIconButton()),
             ),
+            GoRoute(
+              path: '/notifications',
+              builder: (context, state) {
+                navigatedToNotifications = true;
+                return const Scaffold(body: Text('Notifications Page'));
+              },
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
           ),
-          GoRoute(
-            path: '/notifications',
-            builder: (context, state) {
-              navigatedToNotifications = true;
-              return const Scaffold(
-                body: Text('Notifications Page'),
-              );
-            },
+        );
+        await tester.pumpAndSettle();
+
+        // Act
+        await tester.tap(find.byType(IconButton));
+        await tester.pumpAndSettle();
+
+        // Assert
+        expect(navigatedToNotifications, isTrue);
+        expect(find.text('Notifications Page'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'should not push route when tapped and current location is already /notifications',
+      (tester) async {
+        // Arrange
+        var pushAttempts = 0;
+
+        final router = GoRouter(
+          initialLocation: '/notifications',
+          routes: [
+            GoRoute(
+              path: '/notifications',
+              builder: (context, state) {
+                pushAttempts++;
+                return const Scaffold(body: NotificationIconButton());
+              },
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
           ),
-        ],
-      );
+        );
+        await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-        ),
-      );
-      await tester.pumpAndSettle();
+        // Reset counter after initial build
+        pushAttempts = 0;
 
-      // Act
-      await tester.tap(find.byType(IconButton));
-      await tester.pumpAndSettle();
+        // Act
+        await tester.tap(find.byType(IconButton));
+        await tester.pumpAndSettle();
 
-      // Assert
-      expect(navigatedToNotifications, isTrue);
-      expect(find.text('Notifications Page'), findsOneWidget);
-    });
-
-    testWidgets('should not push route when tapped and current location is already /notifications', (tester) async {
-      // Arrange
-      var pushAttempts = 0;
-
-      final router = GoRouter(
-        initialLocation: '/notifications',
-        routes: [
-          GoRoute(
-            path: '/notifications',
-            builder: (context, state) {
-              pushAttempts++;
-              return const Scaffold(
-                body: NotificationIconButton(),
-              );
-            },
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Reset counter after initial build
-      pushAttempts = 0;
-
-      // Act
-      await tester.tap(find.byType(IconButton));
-      await tester.pumpAndSettle();
-
-      // Assert
-      expect(pushAttempts, equals(0));
-    });
+        // Assert
+        expect(pushAttempts, equals(0));
+      },
+    );
   });
 }

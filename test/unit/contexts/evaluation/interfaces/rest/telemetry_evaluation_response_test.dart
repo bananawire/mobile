@@ -26,7 +26,10 @@ void main() {
       // Arrange
       final jsonWithNum = {'status': 'ONLINE', 'signalStrength': 85.0};
       final jsonWithString = {'status': 'ONLINE', 'signalStrength': '75'};
-      final jsonWithInvalid = {'status': 'ONLINE', 'signalStrength': 'not-a-number'};
+      final jsonWithInvalid = {
+        'status': 'ONLINE',
+        'signalStrength': 'not-a-number',
+      };
 
       // Act
       final resNum = ConnectivityResponseResource.fromJson(jsonWithNum);
@@ -51,30 +54,36 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'status': 'CONNECTED',
-        'network': 'CELLULAR',
-        'signalStrength': 3,
-      }));
-    });
-
-    test('should map to domain Connectivity value object correctly via toDomain', () {
-      // Arrange
-      const resource = ConnectivityResponseResource(
-        status: 'CONNECTED',
-        network: 'CELLULAR',
-        signalStrength: 3,
+      expect(
+        json,
+        equals({
+          'status': 'CONNECTED',
+          'network': 'CELLULAR',
+          'signalStrength': 3,
+        }),
       );
-
-      // Act
-      final domain = resource.toDomain();
-
-      // Assert
-      expect(domain, isA<Connectivity>());
-      expect(domain.status, equals('CONNECTED'));
-      expect(domain.network, equals('CELLULAR'));
-      expect(domain.signalStrength, equals(3));
     });
+
+    test(
+      'should map to domain Connectivity value object correctly via toDomain',
+      () {
+        // Arrange
+        const resource = ConnectivityResponseResource(
+          status: 'CONNECTED',
+          network: 'CELLULAR',
+          signalStrength: 3,
+        );
+
+        // Act
+        final domain = resource.toDomain();
+
+        // Assert
+        expect(domain, isA<Connectivity>());
+        expect(domain.status, equals('CONNECTED'));
+        expect(domain.network, equals('CELLULAR'));
+        expect(domain.signalStrength, equals(3));
+      },
+    );
   });
 
   group('TelemetryEvaluationResponseResource', () {
@@ -105,50 +114,63 @@ void main() {
       expect(resource.connectivity.signalStrength, equals(-45));
       expect(resource.healthStatus, equals(1));
       expect(resource.status, equals('NORMAL'));
-      expect(resource.recordedAt, equals(DateTime.parse('2026-10-02T15:30:00.000Z')));
+      expect(
+        resource.recordedAt,
+        equals(DateTime.parse('2026-10-02T15:30:00.000Z')),
+      );
     });
 
-    test('should handle various uptime and healthStatus value types via _asInt', () {
-      // Arrange
-      final jsonWithNumbers = {
-        'id': 'eval-002',
-        'deviceId': 'device-456',
-        'uptime': 7200.0,
-        'connectivity': null,
-        'healthStatus': '2',
-        'status': 'WARNING',
-        'recordedAt': '2026-10-02T16:00:00.000Z',
-      };
+    test(
+      'should handle various uptime and healthStatus value types via _asInt',
+      () {
+        // Arrange
+        final jsonWithNumbers = {
+          'id': 'eval-002',
+          'deviceId': 'device-456',
+          'uptime': 7200.0,
+          'connectivity': null,
+          'healthStatus': '2',
+          'status': 'WARNING',
+          'recordedAt': '2026-10-02T16:00:00.000Z',
+        };
 
-      // Act
-      final resource = TelemetryEvaluationResponseResource.fromJson(jsonWithNumbers);
+        // Act
+        final resource = TelemetryEvaluationResponseResource.fromJson(
+          jsonWithNumbers,
+        );
 
-      // Assert
-      expect(resource.uptime, equals(7200));
-      expect(resource.healthStatus, equals(2));
-      expect(resource.connectivity.status, equals(''));
-      expect(resource.connectivity.network, isNull);
-      expect(resource.connectivity.signalStrength, isNull);
-    });
+        // Assert
+        expect(resource.uptime, equals(7200));
+        expect(resource.healthStatus, equals(2));
+        expect(resource.connectivity.status, equals(''));
+        expect(resource.connectivity.network, isNull);
+        expect(resource.connectivity.signalStrength, isNull);
+      },
+    );
 
-    test('should fall back to zero for non-numeric uptime and healthStatus values', () {
-      // Arrange
-      final jsonWithInvalid = {
-        'id': 'eval-003',
-        'deviceId': 'device-789',
-        'uptime': 'invalid-uptime',
-        'healthStatus': null,
-        'status': 'UNKNOWN',
-        'recordedAt': '2026-10-02T17:00:00.000Z',
-      };
+    test(
+      'should fall back to zero for non-numeric uptime and healthStatus values',
+      () {
+        // Arrange
+        final jsonWithInvalid = {
+          'id': 'eval-003',
+          'deviceId': 'device-789',
+          'uptime': 'invalid-uptime',
+          'healthStatus': null,
+          'status': 'UNKNOWN',
+          'recordedAt': '2026-10-02T17:00:00.000Z',
+        };
 
-      // Act
-      final resource = TelemetryEvaluationResponseResource.fromJson(jsonWithInvalid);
+        // Act
+        final resource = TelemetryEvaluationResponseResource.fromJson(
+          jsonWithInvalid,
+        );
 
-      // Assert
-      expect(resource.uptime, equals(0));
-      expect(resource.healthStatus, equals(0));
-    });
+        // Assert
+        expect(resource.uptime, equals(0));
+        expect(resource.healthStatus, equals(0));
+      },
+    );
 
     test('should serialize to JSON map correctly via toJson', () {
       // Arrange
@@ -171,52 +193,58 @@ void main() {
       final json = resource.toJson();
 
       // Assert
-      expect(json, equals({
-        'id': 'eval-123',
-        'deviceId': 'dev-1',
-        'uptime': 5000,
-        'connectivity': {
-          'status': 'ONLINE',
-          'network': 'ETH0',
-          'signalStrength': 100,
-        },
-        'healthStatus': 1,
-        'status': 'HEALTHY',
-        'recordedAt': '2026-10-02T12:00:00.000Z',
-      }));
-    });
-
-    test('should map to domain TelemetryEvaluationReadModel correctly via toDomain', () {
-      // Arrange
-      final recordedAt = DateTime.parse('2026-10-02T12:00:00.000Z');
-      final resource = TelemetryEvaluationResponseResource(
-        id: 'eval-123',
-        deviceId: 'dev-1',
-        uptime: 5000,
-        connectivity: const ConnectivityResponseResource(
-          status: 'ONLINE',
-          network: 'ETH0',
-          signalStrength: 100,
-        ),
-        healthStatus: 1,
-        status: 'HEALTHY',
-        recordedAt: recordedAt,
+      expect(
+        json,
+        equals({
+          'id': 'eval-123',
+          'deviceId': 'dev-1',
+          'uptime': 5000,
+          'connectivity': {
+            'status': 'ONLINE',
+            'network': 'ETH0',
+            'signalStrength': 100,
+          },
+          'healthStatus': 1,
+          'status': 'HEALTHY',
+          'recordedAt': '2026-10-02T12:00:00.000Z',
+        }),
       );
-
-      // Act
-      final readModel = resource.toDomain();
-
-      // Assert
-      expect(readModel, isA<TelemetryEvaluationReadModel>());
-      expect(readModel.id, equals('eval-123'));
-      expect(readModel.deviceId, equals('dev-1'));
-      expect(readModel.uptimeSeconds, equals(5000));
-      expect(readModel.connectivity.status, equals('ONLINE'));
-      expect(readModel.connectivity.network, equals('ETH0'));
-      expect(readModel.connectivity.signalStrength, equals(100));
-      expect(readModel.healthStatus, equals(1));
-      expect(readModel.status, equals('HEALTHY'));
-      expect(readModel.recordedAt, equals(recordedAt));
     });
+
+    test(
+      'should map to domain TelemetryEvaluationReadModel correctly via toDomain',
+      () {
+        // Arrange
+        final recordedAt = DateTime.parse('2026-10-02T12:00:00.000Z');
+        final resource = TelemetryEvaluationResponseResource(
+          id: 'eval-123',
+          deviceId: 'dev-1',
+          uptime: 5000,
+          connectivity: const ConnectivityResponseResource(
+            status: 'ONLINE',
+            network: 'ETH0',
+            signalStrength: 100,
+          ),
+          healthStatus: 1,
+          status: 'HEALTHY',
+          recordedAt: recordedAt,
+        );
+
+        // Act
+        final readModel = resource.toDomain();
+
+        // Assert
+        expect(readModel, isA<TelemetryEvaluationReadModel>());
+        expect(readModel.id, equals('eval-123'));
+        expect(readModel.deviceId, equals('dev-1'));
+        expect(readModel.uptimeSeconds, equals(5000));
+        expect(readModel.connectivity.status, equals('ONLINE'));
+        expect(readModel.connectivity.network, equals('ETH0'));
+        expect(readModel.connectivity.signalStrength, equals(100));
+        expect(readModel.healthStatus, equals(1));
+        expect(readModel.status, equals('HEALTHY'));
+        expect(readModel.recordedAt, equals(recordedAt));
+      },
+    );
   });
 }

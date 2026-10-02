@@ -102,39 +102,45 @@ void main() {
       );
     });
 
-    test('should throw ArgumentError when password is shorter than 8 characters', () {
-      // Arrange
-      const shortPassword = 'Aa1!';
+    test(
+      'should throw ArgumentError when password is shorter than 8 characters',
+      () {
+        // Arrange
+        const shortPassword = 'Aa1!';
 
-      // Act & Assert
-      expect(
-        () => Password(shortPassword),
-        throwsA(
-          isA<ArgumentError>().having(
-            (e) => e.message,
-            'message',
-            contains('Password must be between 8 and 128 characters'),
+        // Act & Assert
+        expect(
+          () => Password(shortPassword),
+          throwsA(
+            isA<ArgumentError>().having(
+              (e) => e.message,
+              'message',
+              contains('Password must be between 8 and 128 characters'),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
-    test('should throw ArgumentError when password is longer than 128 characters', () {
-      // Arrange
-      final longPassword = 'A' * 126 + 'a1!'; // 129 chars
+    test(
+      'should throw ArgumentError when password is longer than 128 characters',
+      () {
+        // Arrange
+        final longPassword = 'A' * 126 + 'a1!'; // 129 chars
 
-      // Act & Assert
-      expect(
-        () => Password(longPassword),
-        throwsA(
-          isA<ArgumentError>().having(
-            (e) => e.message,
-            'message',
-            contains('Password must be between 8 and 128 characters'),
+        // Act & Assert
+        expect(
+          () => Password(longPassword),
+          throwsA(
+            isA<ArgumentError>().having(
+              (e) => e.message,
+              'message',
+              contains('Password must be between 8 and 128 characters'),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('should throw ArgumentError when password lacks uppercase letter', () {
       // Arrange
@@ -187,22 +193,25 @@ void main() {
       );
     });
 
-    test('should throw ArgumentError when password lacks special character', () {
-      // Arrange
-      const noSpecial = 'SecurePassword123';
+    test(
+      'should throw ArgumentError when password lacks special character',
+      () {
+        // Arrange
+        const noSpecial = 'SecurePassword123';
 
-      // Act & Assert
-      expect(
-        () => Password(noSpecial),
-        throwsA(
-          isA<ArgumentError>().having(
-            (e) => e.message,
-            'message',
-            contains('special character'),
+        // Act & Assert
+        expect(
+          () => Password(noSpecial),
+          throwsA(
+            isA<ArgumentError>().having(
+              (e) => e.message,
+              'message',
+              contains('special character'),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   });
 
   group('VerificationCode', () {
@@ -232,32 +241,35 @@ void main() {
       );
     });
 
-    test('should throw ArgumentError when verification code format is invalid', () {
-      // Arrange
-      const invalidCodes = [
-        'a1b2-c3d4', // lowercase
-        'A1B2C3D4', // missing hyphen
-        'A1B-C3D4', // first group too short
-        'A1B2-C3D', // second group too short
-        'A1B2-C3D45', // second group too long
-        'A1B@-C3D4', // special character
-      ];
+    test(
+      'should throw ArgumentError when verification code format is invalid',
+      () {
+        // Arrange
+        const invalidCodes = [
+          'a1b2-c3d4', // lowercase
+          'A1B2C3D4', // missing hyphen
+          'A1B-C3D4', // first group too short
+          'A1B2-C3D', // second group too short
+          'A1B2-C3D45', // second group too long
+          'A1B@-C3D4', // special character
+        ];
 
-      // Act & Assert
-      for (final invalid in invalidCodes) {
-        expect(
-          () => VerificationCode(invalid),
-          throwsA(
-            isA<ArgumentError>().having(
-              (e) => e.message,
-              'message',
-              contains('Verification code must be in format XXXX-XXXX'),
+        // Act & Assert
+        for (final invalid in invalidCodes) {
+          expect(
+            () => VerificationCode(invalid),
+            throwsA(
+              isA<ArgumentError>().having(
+                (e) => e.message,
+                'message',
+                contains('Verification code must be in format XXXX-XXXX'),
+              ),
             ),
-          ),
-          reason: 'Failed for invalid code: $invalid',
-        );
-      }
-    });
+            reason: 'Failed for invalid code: $invalid',
+          );
+        }
+      },
+    );
   });
 
   group('AccessToken', () {

@@ -11,13 +11,16 @@ void main() {
       expect(alertId.value, equals('alert-123'));
     });
 
-    test('should trim leading and trailing whitespace when value has whitespace', () {
-      // Arrange & Act
-      final alertId = AlertId('  alert-456  ');
+    test(
+      'should trim leading and trailing whitespace when value has whitespace',
+      () {
+        // Arrange & Act
+        final alertId = AlertId('  alert-456  ');
 
-      // Assert
-      expect(alertId.value, equals('alert-456'));
-    });
+        // Assert
+        expect(alertId.value, equals('alert-456'));
+      },
+    );
 
     test('should throw ArgumentError when value is empty', () {
       // Arrange, Act & Assert

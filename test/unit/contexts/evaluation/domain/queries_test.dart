@@ -9,7 +9,9 @@ void main() {
       final deviceId = EvaluationDeviceId('dev-abc-777');
 
       // Act
-      final query = GetLatestTelemetryEvaluationByDeviceQuery(deviceId: deviceId);
+      final query = GetLatestTelemetryEvaluationByDeviceQuery(
+        deviceId: deviceId,
+      );
 
       // Assert
       expect(query.deviceId, equals(deviceId));

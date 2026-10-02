@@ -5,26 +5,31 @@ import 'package:mobile/notifications/domain/model/valueobjects/notification_page
 
 void main() {
   group('NotificationId ValueObject', () {
-    test('should create NotificationId when valid non-empty string is provided', () {
-      // Arrange
-      const rawId = 'notif-12345';
+    test(
+      'should create NotificationId when valid non-empty string is provided',
+      () {
+        // Arrange
+        const rawId = 'notif-12345';
 
-      // Act
-      final id = NotificationId(rawId);
+        // Act
+        final id = NotificationId(rawId);
 
-      // Assert
-      expect(id.value, equals(rawId));
-    });
+        // Assert
+        expect(id.value, equals(rawId));
+      },
+    );
 
     test('should throw ArgumentError when value is empty', () {
       // Arrange, Act & Assert
       expect(
         () => NotificationId(''),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Notification ID is required'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Notification ID is required'),
+          ),
+        ),
       );
     });
 
@@ -32,11 +37,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => NotificationId('   \t\n  '),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Notification ID is required'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Notification ID is required'),
+          ),
+        ),
       );
     });
 
@@ -134,35 +141,38 @@ void main() {
   });
 
   group('NotificationPage ValueObject', () {
-    test('should construct NotificationPage when all properties are provided', () {
-      // Arrange
-      final item = NotificationLog(
-        id: NotificationId('notif-001'),
-        userId: 'usr-001',
-        title: 'Title',
-        message: 'Message',
-        sent: true,
-        createdAt: DateTime.utc(2026, 10, 1),
-        updatedAt: DateTime.utc(2026, 10, 1),
-      );
+    test(
+      'should construct NotificationPage when all properties are provided',
+      () {
+        // Arrange
+        final item = NotificationLog(
+          id: NotificationId('notif-001'),
+          userId: 'usr-001',
+          title: 'Title',
+          message: 'Message',
+          sent: true,
+          createdAt: DateTime.utc(2026, 10, 1),
+          updatedAt: DateTime.utc(2026, 10, 1),
+        );
 
-      // Act
-      final page = NotificationPage(
-        content: [item],
-        totalElements: 1,
-        totalPages: 1,
-        size: 20,
-        number: 0,
-      );
+        // Act
+        final page = NotificationPage(
+          content: [item],
+          totalElements: 1,
+          totalPages: 1,
+          size: 20,
+          number: 0,
+        );
 
-      // Assert
-      expect(page.content.length, equals(1));
-      expect(page.content.first.id.value, equals('notif-001'));
-      expect(page.totalElements, equals(1));
-      expect(page.totalPages, equals(1));
-      expect(page.size, equals(20));
-      expect(page.number, equals(0));
-    });
+        // Assert
+        expect(page.content.length, equals(1));
+        expect(page.content.first.id.value, equals('notif-001'));
+        expect(page.totalElements, equals(1));
+        expect(page.totalPages, equals(1));
+        expect(page.size, equals(20));
+        expect(page.number, equals(0));
+      },
+    );
 
     test('should hold empty content list when no items are present', () {
       // Arrange & Act

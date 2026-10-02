@@ -40,7 +40,10 @@ void main() {
       final password = Password('Password123!');
 
       // Act
-      final command = InitiateRegistrationCommand(email: email, password: password);
+      final command = InitiateRegistrationCommand(
+        email: email,
+        password: password,
+      );
 
       // Assert
       expect(command.email, equals(email));
@@ -49,18 +52,24 @@ void main() {
   });
 
   group('ConfirmRegistrationCommand', () {
-    test('should hold valid sessionId and verificationCode when instantiated', () {
-      // Arrange
-      final sessionId = SessionId('123e4567-e89b-12d3-a456-426614174000');
-      final code = VerificationCode('A1B2-C3D4');
+    test(
+      'should hold valid sessionId and verificationCode when instantiated',
+      () {
+        // Arrange
+        final sessionId = SessionId('123e4567-e89b-12d3-a456-426614174000');
+        final code = VerificationCode('A1B2-C3D4');
 
-      // Act
-      final command = ConfirmRegistrationCommand(sessionId: sessionId, verificationCode: code);
+        // Act
+        final command = ConfirmRegistrationCommand(
+          sessionId: sessionId,
+          verificationCode: code,
+        );
 
-      // Assert
-      expect(command.sessionId, equals(sessionId));
-      expect(command.verificationCode, equals(code));
-    });
+        // Assert
+        expect(command.sessionId, equals(sessionId));
+        expect(command.verificationCode, equals(code));
+      },
+    );
   });
 
   group('AuthenticateWithGoogleCommand', () {
@@ -143,10 +152,7 @@ void main() {
       final occurredOn = DateTime(2026, 1, 1, 13, 0, 0);
 
       // Act
-      final event = UserSignedOutEvent(
-        userId: userId,
-        occurredOn: occurredOn,
-      );
+      final event = UserSignedOutEvent(userId: userId, occurredOn: occurredOn);
 
       // Assert
       expect(event.userId, equals(userId));

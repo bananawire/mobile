@@ -1,0 +1,60 @@
+name: Build and Test - Continuous Integration
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-flutter-tests:
+    name: Build and Run Test Suites
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+
+      - name: Prepare Environment Configuration
+        run: |
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          fi
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Verify Test Code Formatting
+        run: dart format --output=none --set-exit-if-changed test/
+
+      - name: Static Analysis on Test Suite
+        run: flutter analyze test/
+
+      - name: Run All Flutter Test Suites with Coverage
+        run: flutter test --coverage
+
+      - name: Upload Coverage Report Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+          if-no-files-found: ignore

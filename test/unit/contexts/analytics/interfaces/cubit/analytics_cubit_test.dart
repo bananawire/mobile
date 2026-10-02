@@ -24,15 +24,27 @@ import 'package:mobile/devices/domain/services/organizations.query-service.dart'
 import 'package:mobile/devices/domain/services/spaces.query-service.dart';
 
 class MockAnalyticsQueryService extends Mock implements AnalyticsQueryService {}
-class MockOrganizationsQueryService extends Mock implements OrganizationsQueryService {}
+
+class MockOrganizationsQueryService extends Mock
+    implements OrganizationsQueryService {}
+
 class MockSpacesQueryService extends Mock implements SpacesQueryService {}
+
 class MockDevicesQueryService extends Mock implements DevicesQueryService {}
 
-class FakeGetDashboardMetricsQuery extends Fake implements GetDashboardMetricsQuery {}
+class FakeGetDashboardMetricsQuery extends Fake
+    implements GetDashboardMetricsQuery {}
+
 class FakeGetTrendsQuery extends Fake implements GetTrendsQuery {}
-class FakeGetUserOrganizationsQuery extends Fake implements GetUserOrganizationsQuery {}
-class FakeGetSpacesByOrganizationQuery extends Fake implements GetSpacesByOrganizationQuery {}
-class FakeGetDevicesBySpaceQuery extends Fake implements GetDevicesBySpaceQuery {}
+
+class FakeGetUserOrganizationsQuery extends Fake
+    implements GetUserOrganizationsQuery {}
+
+class FakeGetSpacesByOrganizationQuery extends Fake
+    implements GetSpacesByOrganizationQuery {}
+
+class FakeGetDevicesBySpaceQuery extends Fake
+    implements GetDevicesBySpaceQuery {}
 
 void main() {
   late MockAnalyticsQueryService mockAnalytics;
@@ -122,8 +134,9 @@ void main() {
     mockDevices = MockDevicesQueryService();
     liveTelemetryController = StreamController<LiveTelemetry>.broadcast();
 
-    when(() => mockAnalytics.handleStreamLiveTelemetry(any()))
-        .thenAnswer((_) => liveTelemetryController.stream);
+    when(
+      () => mockAnalytics.handleStreamLiveTelemetry(any()),
+    ).thenAnswer((_) => liveTelemetryController.stream);
 
     cubit = AnalyticsCubit(
       mockAnalytics,
@@ -157,54 +170,67 @@ void main() {
   });
 
   group('AnalyticsCubit - load() hierarchy', () {
-    test('should cascade load organizations, spaces, devices and telemetry successfully', () async {
-      // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => Right(sampleSpaces));
-      when(() => mockDevices.handleGetDevicesBySpace(any()))
-          .thenAnswer((_) async => Right(sampleDevicePage));
-      when(() => mockAnalytics.handleGetDashboardMetrics(any()))
-          .thenAnswer((_) async => Right(sampleMetrics));
-      when(() => mockAnalytics.handleGetTrends(any()))
-          .thenAnswer((_) async => Right(sampleTrends));
+    test(
+      'should cascade load organizations, spaces, devices and telemetry successfully',
+      () async {
+        // Arrange
+        when(
+          () => mockOrganizations.handleGetUserOrganizations(any()),
+        ).thenAnswer((_) async => Right(sampleOrgs));
+        when(
+          () => mockSpaces.handleGetSpacesByOrganization(any()),
+        ).thenAnswer((_) async => Right(sampleSpaces));
+        when(
+          () => mockDevices.handleGetDevicesBySpace(any()),
+        ).thenAnswer((_) async => Right(sampleDevicePage));
+        when(
+          () => mockAnalytics.handleGetDashboardMetrics(any()),
+        ).thenAnswer((_) async => Right(sampleMetrics));
+        when(
+          () => mockAnalytics.handleGetTrends(any()),
+        ).thenAnswer((_) async => Right(sampleTrends));
 
-      // Act
-      await cubit.load();
+        // Act
+        await cubit.load();
 
-      // Assert
-      expect(cubit.state.isLoading, isFalse);
-      expect(cubit.state.selectedOrgId, equals('org-1'));
-      expect(cubit.state.organizations.length, equals(1));
-      expect(cubit.state.organizations.first.name, equals('Main Company'));
-      expect(cubit.state.selectedSpaceId, equals('space-1'));
-      expect(cubit.state.spaces.length, equals(1));
-      expect(cubit.state.selectedDeviceId, equals('dev-1'));
-      expect(cubit.state.devices.length, equals(1));
-      expect(cubit.state.liveData, equals(sampleMetrics));
-      expect(cubit.state.trendDataPoints, equals(sampleTrends));
-      expect(cubit.state.hasData, isTrue);
-    });
+        // Assert
+        expect(cubit.state.isLoading, isFalse);
+        expect(cubit.state.selectedOrgId, equals('org-1'));
+        expect(cubit.state.organizations.length, equals(1));
+        expect(cubit.state.organizations.first.name, equals('Main Company'));
+        expect(cubit.state.selectedSpaceId, equals('space-1'));
+        expect(cubit.state.spaces.length, equals(1));
+        expect(cubit.state.selectedDeviceId, equals('dev-1'));
+        expect(cubit.state.devices.length, equals(1));
+        expect(cubit.state.liveData, equals(sampleMetrics));
+        expect(cubit.state.trendDataPoints, equals(sampleTrends));
+        expect(cubit.state.hasData, isTrue);
+      },
+    );
 
     test('should emit error message when organizations query fails', () async {
       // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => const Left(Failure('Connection timeout')));
+      when(
+        () => mockOrganizations.handleGetUserOrganizations(any()),
+      ).thenAnswer((_) async => const Left(Failure('Connection timeout')));
 
       // Act
       await cubit.load();
 
       // Assert
       expect(cubit.state.isLoading, isFalse);
-      expect(cubit.state.errorMessage, equals('Failed to load organizations. Please try again.'));
+      expect(
+        cubit.state.errorMessage,
+        equals('Failed to load organizations. Please try again.'),
+      );
       expect(cubit.state.organizations, isEmpty);
     });
 
     test('should stop cascading when user has no organizations', () async {
       // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => const Right([]));
+      when(
+        () => mockOrganizations.handleGetUserOrganizations(any()),
+      ).thenAnswer((_) async => const Right([]));
 
       // Act
       await cubit.load();
@@ -217,10 +243,12 @@ void main() {
 
     test('should emit error message when spaces query fails', () async {
       // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => const Left(Failure('Spaces error')));
+      when(
+        () => mockOrganizations.handleGetUserOrganizations(any()),
+      ).thenAnswer((_) async => Right(sampleOrgs));
+      when(
+        () => mockSpaces.handleGetSpacesByOrganization(any()),
+      ).thenAnswer((_) async => const Left(Failure('Spaces error')));
 
       // Act
       await cubit.load();
@@ -234,10 +262,12 @@ void main() {
 
     test('should stop cascading when organization has no spaces', () async {
       // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => const Right([]));
+      when(
+        () => mockOrganizations.handleGetUserOrganizations(any()),
+      ).thenAnswer((_) async => Right(sampleOrgs));
+      when(
+        () => mockSpaces.handleGetSpacesByOrganization(any()),
+      ).thenAnswer((_) async => const Right([]));
 
       // Act
       await cubit.load();
@@ -250,12 +280,15 @@ void main() {
 
     test('should emit error message when devices query fails', () async {
       // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => Right(sampleSpaces));
-      when(() => mockDevices.handleGetDevicesBySpace(any()))
-          .thenAnswer((_) async => const Left(Failure('Devices error')));
+      when(
+        () => mockOrganizations.handleGetUserOrganizations(any()),
+      ).thenAnswer((_) async => Right(sampleOrgs));
+      when(
+        () => mockSpaces.handleGetSpacesByOrganization(any()),
+      ).thenAnswer((_) async => Right(sampleSpaces));
+      when(
+        () => mockDevices.handleGetDevicesBySpace(any()),
+      ).thenAnswer((_) async => const Left(Failure('Devices error')));
 
       // Act
       await cubit.load();
@@ -268,45 +301,59 @@ void main() {
   });
 
   group('AnalyticsCubit - Filtering and Selection', () {
-    test('should update selectedSpace and fetch devices when selectSpace is called', () async {
-      // Arrange
-      when(() => mockDevices.handleGetDevicesBySpace(any()))
-          .thenAnswer((_) async => Right(sampleDevicePage));
-      when(() => mockAnalytics.handleGetDashboardMetrics(any()))
-          .thenAnswer((_) async => Right(sampleMetrics));
-      when(() => mockAnalytics.handleGetTrends(any()))
-          .thenAnswer((_) async => Right(sampleTrends));
+    test(
+      'should update selectedSpace and fetch devices when selectSpace is called',
+      () async {
+        // Arrange
+        when(
+          () => mockDevices.handleGetDevicesBySpace(any()),
+        ).thenAnswer((_) async => Right(sampleDevicePage));
+        when(
+          () => mockAnalytics.handleGetDashboardMetrics(any()),
+        ).thenAnswer((_) async => Right(sampleMetrics));
+        when(
+          () => mockAnalytics.handleGetTrends(any()),
+        ).thenAnswer((_) async => Right(sampleTrends));
 
-      // Act
-      await cubit.selectSpace('space-2');
+        // Act
+        await cubit.selectSpace('space-2');
 
-      // Assert
-      expect(cubit.state.selectedSpaceId, equals('space-2'));
-      expect(cubit.state.selectedDeviceId, equals('dev-1'));
-    });
+        // Assert
+        expect(cubit.state.selectedSpaceId, equals('space-2'));
+        expect(cubit.state.selectedDeviceId, equals('dev-1'));
+      },
+    );
 
-    test('should update selectedPeriod and refetch data when selectPeriod is called', () async {
-      // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => Right(sampleSpaces));
-      when(() => mockDevices.handleGetDevicesBySpace(any()))
-          .thenAnswer((_) async => Right(sampleDevicePage));
-      when(() => mockAnalytics.handleGetDashboardMetrics(any()))
-          .thenAnswer((_) async => Right(sampleMetrics));
-      when(() => mockAnalytics.handleGetTrends(any()))
-          .thenAnswer((_) async => Right(sampleTrends));
-      await cubit.load();
+    test(
+      'should update selectedPeriod and refetch data when selectPeriod is called',
+      () async {
+        // Arrange
+        when(
+          () => mockOrganizations.handleGetUserOrganizations(any()),
+        ).thenAnswer((_) async => Right(sampleOrgs));
+        when(
+          () => mockSpaces.handleGetSpacesByOrganization(any()),
+        ).thenAnswer((_) async => Right(sampleSpaces));
+        when(
+          () => mockDevices.handleGetDevicesBySpace(any()),
+        ).thenAnswer((_) async => Right(sampleDevicePage));
+        when(
+          () => mockAnalytics.handleGetDashboardMetrics(any()),
+        ).thenAnswer((_) async => Right(sampleMetrics));
+        when(
+          () => mockAnalytics.handleGetTrends(any()),
+        ).thenAnswer((_) async => Right(sampleTrends));
+        await cubit.load();
 
-      // Act
-      cubit.selectPeriod('DAY');
-      await pumpEventQueue();
+        // Act
+        cubit.selectPeriod('DAY');
+        await pumpEventQueue();
 
-      // Assert
-      expect(cubit.state.selectedPeriod, equals('DAY'));
-      expect(cubit.state.isLive, isFalse);
-    });
+        // Assert
+        expect(cubit.state.selectedPeriod, equals('DAY'));
+        expect(cubit.state.isLive, isFalse);
+      },
+    );
 
     test('should update selectedMetric when selectMetric is called', () {
       // Act
@@ -318,91 +365,116 @@ void main() {
   });
 
   group('AnalyticsCubit - Data Fetching and Errors', () {
-    test('should set liveUnavailable true when metrics query returns 404', () async {
-      // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => Right(sampleSpaces));
-      when(() => mockDevices.handleGetDevicesBySpace(any()))
-          .thenAnswer((_) async => Right(sampleDevicePage));
-      when(() => mockAnalytics.handleGetDashboardMetrics(any())).thenAnswer(
-        (_) async => const Left(Failure('Device dev-1 telemetry is not available', statusCode: 404)),
-      );
-      when(() => mockAnalytics.handleGetTrends(any()))
-          .thenAnswer((_) async => const Right([]));
+    test(
+      'should set liveUnavailable true when metrics query returns 404',
+      () async {
+        // Arrange
+        when(
+          () => mockOrganizations.handleGetUserOrganizations(any()),
+        ).thenAnswer((_) async => Right(sampleOrgs));
+        when(
+          () => mockSpaces.handleGetSpacesByOrganization(any()),
+        ).thenAnswer((_) async => Right(sampleSpaces));
+        when(
+          () => mockDevices.handleGetDevicesBySpace(any()),
+        ).thenAnswer((_) async => Right(sampleDevicePage));
+        when(() => mockAnalytics.handleGetDashboardMetrics(any())).thenAnswer(
+          (_) async => const Left(
+            Failure('Device dev-1 telemetry is not available', statusCode: 404),
+          ),
+        );
+        when(
+          () => mockAnalytics.handleGetTrends(any()),
+        ).thenAnswer((_) async => const Right([]));
 
-      // Act
-      await cubit.load();
+        // Act
+        await cubit.load();
 
-      // Assert
-      expect(cubit.state.liveUnavailable, isTrue);
-      expect(cubit.state.liveUnavailableMessage, contains('"Sensor 01"'));
-      expect(cubit.state.liveData, isNull);
-    });
+        // Assert
+        expect(cubit.state.liveUnavailable, isTrue);
+        expect(cubit.state.liveUnavailableMessage, contains('"Sensor 01"'));
+        expect(cubit.state.liveData, isNull);
+      },
+    );
 
-    test('should clear liveData when metrics query returns non-404 failure', () async {
-      // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => Right(sampleSpaces));
-      when(() => mockDevices.handleGetDevicesBySpace(any()))
-          .thenAnswer((_) async => Right(sampleDevicePage));
-      when(() => mockAnalytics.handleGetDashboardMetrics(any())).thenAnswer(
-        (_) async => const Left(Failure('Internal server error', statusCode: 500)),
-      );
-      when(() => mockAnalytics.handleGetTrends(any()))
-          .thenAnswer((_) async => const Right([]));
+    test(
+      'should clear liveData when metrics query returns non-404 failure',
+      () async {
+        // Arrange
+        when(
+          () => mockOrganizations.handleGetUserOrganizations(any()),
+        ).thenAnswer((_) async => Right(sampleOrgs));
+        when(
+          () => mockSpaces.handleGetSpacesByOrganization(any()),
+        ).thenAnswer((_) async => Right(sampleSpaces));
+        when(
+          () => mockDevices.handleGetDevicesBySpace(any()),
+        ).thenAnswer((_) async => Right(sampleDevicePage));
+        when(() => mockAnalytics.handleGetDashboardMetrics(any())).thenAnswer(
+          (_) async =>
+              const Left(Failure('Internal server error', statusCode: 500)),
+        );
+        when(
+          () => mockAnalytics.handleGetTrends(any()),
+        ).thenAnswer((_) async => const Right([]));
 
-      // Act
-      await cubit.load();
+        // Act
+        await cubit.load();
 
-      // Assert
-      expect(cubit.state.liveUnavailable, isFalse);
-      expect(cubit.state.liveData, isNull);
-    });
+        // Assert
+        expect(cubit.state.liveUnavailable, isFalse);
+        expect(cubit.state.liveData, isNull);
+      },
+    );
   });
 
   group('AnalyticsCubit - Live Telemetry SSE stream', () {
-    test('should update liveData and trendDataPoints when SSE event arrives', () async {
-      // Arrange
-      when(() => mockOrganizations.handleGetUserOrganizations(any()))
-          .thenAnswer((_) async => Right(sampleOrgs));
-      when(() => mockSpaces.handleGetSpacesByOrganization(any()))
-          .thenAnswer((_) async => Right(sampleSpaces));
-      when(() => mockDevices.handleGetDevicesBySpace(any()))
-          .thenAnswer((_) async => Right(sampleDevicePage));
-      when(() => mockAnalytics.handleGetDashboardMetrics(any()))
-          .thenAnswer((_) async => Right(sampleMetrics));
-      when(() => mockAnalytics.handleGetTrends(any()))
-          .thenAnswer((_) async => Right(sampleTrends));
+    test(
+      'should update liveData and trendDataPoints when SSE event arrives',
+      () async {
+        // Arrange
+        when(
+          () => mockOrganizations.handleGetUserOrganizations(any()),
+        ).thenAnswer((_) async => Right(sampleOrgs));
+        when(
+          () => mockSpaces.handleGetSpacesByOrganization(any()),
+        ).thenAnswer((_) async => Right(sampleSpaces));
+        when(
+          () => mockDevices.handleGetDevicesBySpace(any()),
+        ).thenAnswer((_) async => Right(sampleDevicePage));
+        when(
+          () => mockAnalytics.handleGetDashboardMetrics(any()),
+        ).thenAnswer((_) async => Right(sampleMetrics));
+        when(
+          () => mockAnalytics.handleGetTrends(any()),
+        ).thenAnswer((_) async => Right(sampleTrends));
 
-      await cubit.load();
+        await cubit.load();
 
-      // Act - simulate live SSE telemetry packet
-      const telemetry = LiveTelemetry(
-        deviceId: 'dev-1',
-        co2: 620.0,
-        pm2_5: 15.0,
-        temperature: 24.0,
-        humidity: 52.0,
-        timestamp: '2026-10-02T12:05:00Z',
-      );
-      liveTelemetryController.add(telemetry);
+        // Act - simulate live SSE telemetry packet
+        const telemetry = LiveTelemetry(
+          deviceId: 'dev-1',
+          co2: 620.0,
+          pm2_5: 15.0,
+          temperature: 24.0,
+          humidity: 52.0,
+          timestamp: '2026-10-02T12:05:00Z',
+        );
+        liveTelemetryController.add(telemetry);
 
-      // Wait a microtask for stream event processing
-      await pumpEventQueue();
+        // Wait a microtask for stream event processing
+        await pumpEventQueue();
 
-      // Assert
-      expect(cubit.state.liveData, isNotNull);
-      expect(cubit.state.liveData!.co2.value, equals(620.0));
-      expect(cubit.state.liveData!.pm2_5.value, equals(15.0));
-      expect(cubit.state.liveData!.temperature.value, equals(24.0));
-      expect(cubit.state.liveData!.humidity.value, equals(52.0));
-      expect(cubit.state.trendDataPoints.length, equals(2));
-      expect(cubit.state.trendDataPoints.last.co2, equals(620.0));
-      expect(cubit.state.secondsSinceUpdate, equals(0));
-    });
+        // Assert
+        expect(cubit.state.liveData, isNotNull);
+        expect(cubit.state.liveData!.co2.value, equals(620.0));
+        expect(cubit.state.liveData!.pm2_5.value, equals(15.0));
+        expect(cubit.state.liveData!.temperature.value, equals(24.0));
+        expect(cubit.state.liveData!.humidity.value, equals(52.0));
+        expect(cubit.state.trendDataPoints.length, equals(2));
+        expect(cubit.state.trendDataPoints.last.co2, equals(620.0));
+        expect(cubit.state.secondsSinceUpdate, equals(0));
+      },
+    );
   });
 }

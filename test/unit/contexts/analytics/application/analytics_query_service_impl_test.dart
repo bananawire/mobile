@@ -58,204 +58,231 @@ void main() {
   });
 
   group('handleGetDashboardMetrics', () {
-    test('should return Right with DashboardMetrics when gateway succeeds', () async {
-      // Arrange
-      const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
-      when(() => mockGateway.getDashboardMetrics(
+    test(
+      'should return Right with DashboardMetrics when gateway succeeds',
+      () async {
+        // Arrange
+        const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
+        when(
+          () => mockGateway.getDashboardMetrics(
             deviceId: 'dev-1',
             period: any(named: 'period'),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenAnswer((_) async => sampleMetricsResource);
+          ),
+        ).thenAnswer((_) async => sampleMetricsResource);
 
-      // Act
-      final result = await service.handleGetDashboardMetrics(query);
+        // Act
+        final result = await service.handleGetDashboardMetrics(query);
 
-      // Assert
-      expect(result.isRight(), isTrue);
-      result.fold(
-        (failure) => fail('Expected Right, got Left: $failure'),
-        (metrics) {
+        // Assert
+        expect(result.isRight(), isTrue);
+        result.fold((failure) => fail('Expected Right, got Left: $failure'), (
+          metrics,
+        ) {
           expect(metrics, isA<DashboardMetrics>());
           expect(metrics.aqi.value, equals(42.0));
           expect(metrics.aqi.category, equals('Good'));
           expect(metrics.co2.value, equals(500.0));
-        },
-      );
-      verify(() => mockGateway.getDashboardMetrics(
+        });
+        verify(
+          () => mockGateway.getDashboardMetrics(
             deviceId: 'dev-1',
             period: null,
             startDate: null,
             endDate: null,
-          )).called(1);
-    });
+          ),
+        ).called(1);
+      },
+    );
 
-    test('should return Left with 404 Failure and default message when 404 has no server message', () async {
-      // Arrange
-      const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
-      final dioException = DioException(
-        requestOptions: RequestOptions(path: '/test'),
-        response: Response(
+    test(
+      'should return Left with 404 Failure and default message when 404 has no server message',
+      () async {
+        // Arrange
+        const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
+        final dioException = DioException(
           requestOptions: RequestOptions(path: '/test'),
-          statusCode: 404,
-        ),
-      );
-      when(() => mockGateway.getDashboardMetrics(
+          response: Response(
+            requestOptions: RequestOptions(path: '/test'),
+            statusCode: 404,
+          ),
+        );
+        when(
+          () => mockGateway.getDashboardMetrics(
             deviceId: any(named: 'deviceId'),
             period: any(named: 'period'),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenThrow(dioException);
+          ),
+        ).thenThrow(dioException);
 
-      // Act
-      final result = await service.handleGetDashboardMetrics(query);
+        // Act
+        final result = await service.handleGetDashboardMetrics(query);
 
-      // Assert
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) {
+        // Assert
+        expect(result.isLeft(), isTrue);
+        result.fold((failure) {
           expect(failure.statusCode, equals(404));
-          expect(failure.message, equals('Live data is not available right now.'));
-        },
-        (_) => fail('Expected Left, got Right'),
-      );
-    });
+          expect(
+            failure.message,
+            equals('Live data is not available right now.'),
+          );
+        }, (_) => fail('Expected Left, got Right'));
+      },
+    );
 
-    test('should return Left with server message when DioException contains error message', () async {
-      // Arrange
-      const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
-      final dioException = DioException(
-        requestOptions: RequestOptions(path: '/test'),
-        response: Response(
+    test(
+      'should return Left with server message when DioException contains error message',
+      () async {
+        // Arrange
+        const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
+        final dioException = DioException(
           requestOptions: RequestOptions(path: '/test'),
-          statusCode: 404,
-          data: {'message': 'Device telemetry offline'},
-        ),
-      );
-      when(() => mockGateway.getDashboardMetrics(
+          response: Response(
+            requestOptions: RequestOptions(path: '/test'),
+            statusCode: 404,
+            data: {'message': 'Device telemetry offline'},
+          ),
+        );
+        when(
+          () => mockGateway.getDashboardMetrics(
             deviceId: any(named: 'deviceId'),
             period: any(named: 'period'),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenThrow(dioException);
+          ),
+        ).thenThrow(dioException);
 
-      // Act
-      final result = await service.handleGetDashboardMetrics(query);
+        // Act
+        final result = await service.handleGetDashboardMetrics(query);
 
-      // Assert
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) {
+        // Assert
+        expect(result.isLeft(), isTrue);
+        result.fold((failure) {
           expect(failure.statusCode, equals(404));
           expect(failure.message, equals('Device telemetry offline'));
-        },
-        (_) => fail('Expected Left, got Right'),
-      );
-    });
+        }, (_) => fail('Expected Left, got Right'));
+      },
+    );
 
-    test('should return Left with generic Failure when unexpected exception is thrown', () async {
-      // Arrange
-      const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
-      when(() => mockGateway.getDashboardMetrics(
+    test(
+      'should return Left with generic Failure when unexpected exception is thrown',
+      () async {
+        // Arrange
+        const query = GetDashboardMetricsQuery(deviceId: 'dev-1');
+        when(
+          () => mockGateway.getDashboardMetrics(
             deviceId: any(named: 'deviceId'),
             period: any(named: 'period'),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenThrow(Exception('Network socket crash'));
+          ),
+        ).thenThrow(Exception('Network socket crash'));
 
-      // Act
-      final result = await service.handleGetDashboardMetrics(query);
+        // Act
+        final result = await service.handleGetDashboardMetrics(query);
 
-      // Assert
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) {
+        // Assert
+        expect(result.isLeft(), isTrue);
+        result.fold((failure) {
           expect(failure.message, equals('An unexpected error occurred'));
-        },
-        (_) => fail('Expected Left, got Right'),
-      );
-    });
+        }, (_) => fail('Expected Left, got Right'));
+      },
+    );
   });
 
   group('handleGetTrends', () {
-    test('should return Right with List<TrendPoint> when gateway succeeds', () async {
-      // Arrange
-      const query = GetTrendsQuery(deviceId: 'dev-1', period: 'DAY');
-      when(() => mockGateway.getTrends(
+    test(
+      'should return Right with List<TrendPoint> when gateway succeeds',
+      () async {
+        // Arrange
+        const query = GetTrendsQuery(deviceId: 'dev-1', period: 'DAY');
+        when(
+          () => mockGateway.getTrends(
             deviceId: 'dev-1',
             period: 'DAY',
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenAnswer((_) async => sampleTrendsResource);
+          ),
+        ).thenAnswer((_) async => sampleTrendsResource);
 
-      // Act
-      final result = await service.handleGetTrends(query);
+        // Act
+        final result = await service.handleGetTrends(query);
 
-      // Assert
-      expect(result.isRight(), isTrue);
-      result.fold(
-        (failure) => fail('Expected Right, got Left: $failure'),
-        (points) {
+        // Assert
+        expect(result.isRight(), isTrue);
+        result.fold((failure) => fail('Expected Right, got Left: $failure'), (
+          points,
+        ) {
           expect(points.length, equals(2));
           expect(points.first, isA<TrendPoint>());
           expect(points.first.timestamp, equals('2026-10-02T10:00:00Z'));
           expect(points.last.aqiValue, equals(45.0));
-        },
-      );
-    });
+        });
+      },
+    );
 
-    test('should return Left with Failure when gateway throws DioException with 500', () async {
-      // Arrange
-      const query = GetTrendsQuery(deviceId: 'dev-1');
-      final dioException = DioException(
-        requestOptions: RequestOptions(path: '/test'),
-        response: Response(
+    test(
+      'should return Left with Failure when gateway throws DioException with 500',
+      () async {
+        // Arrange
+        const query = GetTrendsQuery(deviceId: 'dev-1');
+        final dioException = DioException(
           requestOptions: RequestOptions(path: '/test'),
-          statusCode: 500,
-          data: {'message': 'Database query failed'},
-        ),
-      );
-      when(() => mockGateway.getTrends(
+          response: Response(
+            requestOptions: RequestOptions(path: '/test'),
+            statusCode: 500,
+            data: {'message': 'Database query failed'},
+          ),
+        );
+        when(
+          () => mockGateway.getTrends(
             deviceId: any(named: 'deviceId'),
             period: any(named: 'period'),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenThrow(dioException);
+          ),
+        ).thenThrow(dioException);
 
-      // Act
-      final result = await service.handleGetTrends(query);
+        // Act
+        final result = await service.handleGetTrends(query);
 
-      // Assert
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) {
+        // Assert
+        expect(result.isLeft(), isTrue);
+        result.fold((failure) {
           expect(failure.statusCode, equals(500));
           expect(failure.message, equals('Database query failed'));
-        },
-        (_) => fail('Expected Left, got Right'),
-      );
-    });
+        }, (_) => fail('Expected Left, got Right'));
+      },
+    );
 
-    test('should return Left with generic Failure when unexpected exception is thrown', () async {
-      // Arrange
-      const query = GetTrendsQuery(deviceId: 'dev-1');
-      when(() => mockGateway.getTrends(
+    test(
+      'should return Left with generic Failure when unexpected exception is thrown',
+      () async {
+        // Arrange
+        const query = GetTrendsQuery(deviceId: 'dev-1');
+        when(
+          () => mockGateway.getTrends(
             deviceId: any(named: 'deviceId'),
             period: any(named: 'period'),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenThrow(Exception('Unknown system fault'));
+          ),
+        ).thenThrow(Exception('Unknown system fault'));
 
-      // Act
-      final result = await service.handleGetTrends(query);
+        // Act
+        final result = await service.handleGetTrends(query);
 
-      // Assert
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) => expect(failure.message, equals('An unexpected error occurred')),
-        (_) => fail('Expected Left, got Right'),
-      );
-    });
+        // Assert
+        expect(result.isLeft(), isTrue);
+        result.fold(
+          (failure) =>
+              expect(failure.message, equals('An unexpected error occurred')),
+          (_) => fail('Expected Left, got Right'),
+        );
+      },
+    );
   });
 
   group('handleStreamLiveTelemetry', () {
@@ -271,7 +298,9 @@ void main() {
           timestamp: '2026-10-02T12:00:00Z',
         ),
       ]);
-      when(() => mockGateway.streamLiveTelemetry('dev-1')).thenAnswer((_) => telemetryStream);
+      when(
+        () => mockGateway.streamLiveTelemetry('dev-1'),
+      ).thenAnswer((_) => telemetryStream);
 
       // Act
       final stream = service.handleStreamLiveTelemetry('dev-1');

@@ -25,29 +25,32 @@ void main() {
       );
     }
 
-    test('should construct AlertPage with all required pagination properties', () {
-      // Arrange
-      final alert1 = createDummyAlert('alert-1');
-      final alert2 = createDummyAlert('alert-2');
+    test(
+      'should construct AlertPage with all required pagination properties',
+      () {
+        // Arrange
+        final alert1 = createDummyAlert('alert-1');
+        final alert2 = createDummyAlert('alert-2');
 
-      // Act
-      final page = AlertPage(
-        content: [alert1, alert2],
-        totalElements: 50,
-        totalPages: 5,
-        size: 10,
-        number: 2,
-      );
+        // Act
+        final page = AlertPage(
+          content: [alert1, alert2],
+          totalElements: 50,
+          totalPages: 5,
+          size: 10,
+          number: 2,
+        );
 
-      // Assert
-      expect(page.content.length, equals(2));
-      expect(page.content.first.id.value, equals('alert-1'));
-      expect(page.totalElements, equals(50));
-      expect(page.totalPages, equals(5));
-      expect(page.size, equals(10));
-      expect(page.number, equals(2));
-      expect(page.page, equals(2));
-    });
+        // Assert
+        expect(page.content.length, equals(2));
+        expect(page.content.first.id.value, equals('alert-1'));
+        expect(page.totalElements, equals(50));
+        expect(page.totalPages, equals(5));
+        expect(page.size, equals(10));
+        expect(page.number, equals(2));
+        expect(page.page, equals(2));
+      },
+    );
 
     test('should construct empty AlertPage when content is empty', () {
       // Arrange & Act

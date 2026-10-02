@@ -60,7 +60,10 @@ void main() {
 
       // Assert
       expect(capturedOptions.method, equals('GET'));
-      expect(capturedOptions.path, equals('/api/v1/analytics/devices/device-001/live'));
+      expect(
+        capturedOptions.path,
+        equals('/api/v1/analytics/devices/device-001/live'),
+      );
       expect(capturedOptions.queryParameters, isEmpty);
       expect(result.aqiValue, equals(35.0));
       expect(result.aqiCategory, equals('Good'));
@@ -75,71 +78,96 @@ void main() {
       gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
 
       // Act
-      final result = await gateway.getDashboardMetrics(deviceId: 'device-001', period: 'LIVE');
+      final result = await gateway.getDashboardMetrics(
+        deviceId: 'device-001',
+        period: 'LIVE',
+      );
 
       // Assert
-      expect(capturedOptions.path, equals('/api/v1/analytics/devices/device-001/live'));
+      expect(
+        capturedOptions.path,
+        equals('/api/v1/analytics/devices/device-001/live'),
+      );
       expect(capturedOptions.queryParameters, isEmpty);
       expect(result.averageCo2, equals(480.0));
     });
 
-    test('should request historical endpoint and include period when period is not live', () async {
-      // Arrange
-      dio.httpClientAdapter = FakeHttpClientAdapter((options) async {
-        capturedOptions = options;
-        return FakeHttpClientAdapter.jsonResponse(sampleMetricsJson);
-      });
-      gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
+    test(
+      'should request historical endpoint and include period when period is not live',
+      () async {
+        // Arrange
+        dio.httpClientAdapter = FakeHttpClientAdapter((options) async {
+          capturedOptions = options;
+          return FakeHttpClientAdapter.jsonResponse(sampleMetricsJson);
+        });
+        gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
 
-      // Act
-      final result = await gateway.getDashboardMetrics(
-        deviceId: 'device-002',
-        period: 'DAY',
-        startDate: '2026-10-01T00:00:00Z',
-        endDate: '2026-10-02T00:00:00Z',
-      );
+        // Act
+        final result = await gateway.getDashboardMetrics(
+          deviceId: 'device-002',
+          period: 'DAY',
+          startDate: '2026-10-01T00:00:00Z',
+          endDate: '2026-10-02T00:00:00Z',
+        );
 
-      // Assert
-      expect(capturedOptions.path, equals('/api/v1/analytics/devices/device-002/historical'));
-      expect(capturedOptions.queryParameters, equals({
-        'period': 'DAY',
-        'startDate': '2026-10-01T00:00:00Z',
-        'endDate': '2026-10-02T00:00:00Z',
-      }));
-      expect(result.averagePm2_5, equals(9.0));
-    });
+        // Assert
+        expect(
+          capturedOptions.path,
+          equals('/api/v1/analytics/devices/device-002/historical'),
+        );
+        expect(
+          capturedOptions.queryParameters,
+          equals({
+            'period': 'DAY',
+            'startDate': '2026-10-01T00:00:00Z',
+            'endDate': '2026-10-02T00:00:00Z',
+          }),
+        );
+        expect(result.averagePm2_5, equals(9.0));
+      },
+    );
 
     test('should throw DioException when server responds with 404', () async {
       // Arrange
       dio.httpClientAdapter = FakeHttpClientAdapter((options) async {
-        return FakeHttpClientAdapter.jsonResponse(
-          {'message': 'Device not found'},
-          statusCode: 404,
-        );
+        return FakeHttpClientAdapter.jsonResponse({
+          'message': 'Device not found',
+        }, statusCode: 404);
       });
       gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
 
       // Act & Assert
       expect(
         () => gateway.getDashboardMetrics(deviceId: 'unknown-id'),
-        throwsA(isA<DioException>().having((e) => e.response?.statusCode, 'statusCode', 404)),
+        throwsA(
+          isA<DioException>().having(
+            (e) => e.response?.statusCode,
+            'statusCode',
+            404,
+          ),
+        ),
       );
     });
 
     test('should throw DioException when server responds with 500', () async {
       // Arrange
       dio.httpClientAdapter = FakeHttpClientAdapter((options) async {
-        return FakeHttpClientAdapter.jsonResponse(
-          {'error': 'Internal server error'},
-          statusCode: 500,
-        );
+        return FakeHttpClientAdapter.jsonResponse({
+          'error': 'Internal server error',
+        }, statusCode: 500);
       });
       gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
 
       // Act & Assert
       expect(
         () => gateway.getDashboardMetrics(deviceId: 'error-id'),
-        throwsA(isA<DioException>().having((e) => e.response?.statusCode, 'statusCode', 500)),
+        throwsA(
+          isA<DioException>().having(
+            (e) => e.response?.statusCode,
+            'statusCode',
+            500,
+          ),
+        ),
       );
     });
   });
@@ -163,47 +191,64 @@ void main() {
 
       // Assert
       expect(capturedOptions.method, equals('GET'));
-      expect(capturedOptions.path, equals('/api/v1/analytics/devices/device-003/trends'));
-      expect(capturedOptions.queryParameters, equals({
-        'period': 'WEEK',
-        'startDate': '2026-09-25T00:00:00Z',
-        'endDate': '2026-10-02T00:00:00Z',
-      }));
+      expect(
+        capturedOptions.path,
+        equals('/api/v1/analytics/devices/device-003/trends'),
+      );
+      expect(
+        capturedOptions.queryParameters,
+        equals({
+          'period': 'WEEK',
+          'startDate': '2026-09-25T00:00:00Z',
+          'endDate': '2026-10-02T00:00:00Z',
+        }),
+      );
       expect(result.dataPoints.length, equals(1));
       expect(result.dataPoints.first.aqiValue, equals(30.0));
     });
 
-    test('should request trends endpoint without query parameters when none provided', () async {
-      // Arrange
-      dio.httpClientAdapter = FakeHttpClientAdapter((options) async {
-        capturedOptions = options;
-        return FakeHttpClientAdapter.jsonResponse(sampleTrendsJson);
-      });
-      gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
+    test(
+      'should request trends endpoint without query parameters when none provided',
+      () async {
+        // Arrange
+        dio.httpClientAdapter = FakeHttpClientAdapter((options) async {
+          capturedOptions = options;
+          return FakeHttpClientAdapter.jsonResponse(sampleTrendsJson);
+        });
+        gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
 
-      // Act
-      final result = await gateway.getTrends(deviceId: 'device-004');
+        // Act
+        final result = await gateway.getTrends(deviceId: 'device-004');
 
-      // Assert
-      expect(capturedOptions.path, equals('/api/v1/analytics/devices/device-004/trends'));
-      expect(capturedOptions.queryParameters, isEmpty);
-      expect(result.dataPoints, isNotEmpty);
-    });
+        // Assert
+        expect(
+          capturedOptions.path,
+          equals('/api/v1/analytics/devices/device-004/trends'),
+        );
+        expect(capturedOptions.queryParameters, isEmpty);
+        expect(result.dataPoints, isNotEmpty);
+      },
+    );
 
     test('should throw DioException when trends request fails', () async {
       // Arrange
       dio.httpClientAdapter = FakeHttpClientAdapter((options) async {
-        return FakeHttpClientAdapter.jsonResponse(
-          {'message': 'Data unavailable'},
-          statusCode: 503,
-        );
+        return FakeHttpClientAdapter.jsonResponse({
+          'message': 'Data unavailable',
+        }, statusCode: 503);
       });
       gateway = AnalyticsHttpGateway(dio, mockTokenStorage);
 
       // Act & Assert
       expect(
         () => gateway.getTrends(deviceId: 'fail-device'),
-        throwsA(isA<DioException>().having((e) => e.response?.statusCode, 'statusCode', 503)),
+        throwsA(
+          isA<DioException>().having(
+            (e) => e.response?.statusCode,
+            'statusCode',
+            503,
+          ),
+        ),
       );
     });
   });

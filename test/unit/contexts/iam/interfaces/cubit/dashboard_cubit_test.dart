@@ -12,10 +12,16 @@ import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.
 import 'package:mobile/iam/interfaces/pages/dashboard/dashboard_cubit.dart';
 import 'package:mobile/iam/interfaces/rest/resources/token_verification_resource.resource.dart';
 
-class MockAuthenticationCommandService extends Mock implements AuthenticationCommandService {}
-class MockAuthenticationQueryService extends Mock implements AuthenticationQueryService {}
+class MockAuthenticationCommandService extends Mock
+    implements AuthenticationCommandService {}
+
+class MockAuthenticationQueryService extends Mock
+    implements AuthenticationQueryService {}
+
 class MockTokenLocalStorage extends Mock implements TokenLocalStorage {}
+
 class FakeSignOutCommand extends Fake implements SignOutCommand {}
+
 class FakeVerifyTokenQuery extends Fake implements VerifyTokenQuery {}
 
 void main() {
@@ -47,7 +53,11 @@ void main() {
 
   group('DashboardCubit', () {
     test('should have initial state with default values', () {
-      final cubit = DashboardCubit(mockCommandService, mockQueryService, mockLocalStorage);
+      final cubit = DashboardCubit(
+        mockCommandService,
+        mockQueryService,
+        mockLocalStorage,
+      );
       expect(cubit.state.isLoading, isFalse);
       expect(cubit.state.errorMessage, isNull);
       expect(cubit.state.email, isNull);
@@ -57,14 +67,19 @@ void main() {
     blocTest<DashboardCubit, DashboardState>(
       'should emit unauthenticated when stored token is null',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => null);
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => null);
         when(() => mockLocalStorage.getEmail()).thenAnswer((_) async => null);
-        return DashboardCubit(mockCommandService, mockQueryService, mockLocalStorage);
+        return DashboardCubit(
+          mockCommandService,
+          mockQueryService,
+          mockLocalStorage,
+        );
       },
       act: (cubit) => cubit.loadSession(),
       expect: () => [
-        isA<DashboardState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<DashboardState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<DashboardState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isFalse),
@@ -77,14 +92,19 @@ void main() {
     blocTest<DashboardCubit, DashboardState>(
       'should emit unauthenticated when stored token is empty string',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => '');
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => '');
         when(() => mockLocalStorage.getEmail()).thenAnswer((_) async => null);
-        return DashboardCubit(mockCommandService, mockQueryService, mockLocalStorage);
+        return DashboardCubit(
+          mockCommandService,
+          mockQueryService,
+          mockLocalStorage,
+        );
       },
       act: (cubit) => cubit.loadSession(),
       expect: () => [
-        isA<DashboardState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<DashboardState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<DashboardState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isFalse),
@@ -94,16 +114,24 @@ void main() {
     blocTest<DashboardCubit, DashboardState>(
       'should emit authenticated with email and update AuthSession when verifyToken succeeds',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => 'valid-jwt');
-        when(() => mockLocalStorage.getEmail()).thenAnswer((_) async => 'user@example.com');
-        when(() => mockQueryService.handleVerifyToken(any()))
-            .thenAnswer((_) async => const Right(sampleVerification));
-        return DashboardCubit(mockCommandService, mockQueryService, mockLocalStorage);
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => 'valid-jwt');
+        when(
+          () => mockLocalStorage.getEmail(),
+        ).thenAnswer((_) async => 'user@example.com');
+        when(
+          () => mockQueryService.handleVerifyToken(any()),
+        ).thenAnswer((_) async => const Right(sampleVerification));
+        return DashboardCubit(
+          mockCommandService,
+          mockQueryService,
+          mockLocalStorage,
+        );
       },
       act: (cubit) => cubit.loadSession(),
       expect: () => [
-        isA<DashboardState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<DashboardState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<DashboardState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isTrue)
@@ -117,20 +145,33 @@ void main() {
     blocTest<DashboardCubit, DashboardState>(
       'should emit unauthenticated with errorMessage and update AuthSession when verifyToken fails',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => 'expired-jwt');
-        when(() => mockLocalStorage.getEmail()).thenAnswer((_) async => 'user@example.com');
-        when(() => mockQueryService.handleVerifyToken(any()))
-            .thenAnswer((_) async => const Left(Failure('Session expired. Please sign in again.')));
-        return DashboardCubit(mockCommandService, mockQueryService, mockLocalStorage);
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => 'expired-jwt');
+        when(
+          () => mockLocalStorage.getEmail(),
+        ).thenAnswer((_) async => 'user@example.com');
+        when(() => mockQueryService.handleVerifyToken(any())).thenAnswer(
+          (_) async =>
+              const Left(Failure('Session expired. Please sign in again.')),
+        );
+        return DashboardCubit(
+          mockCommandService,
+          mockQueryService,
+          mockLocalStorage,
+        );
       },
       act: (cubit) => cubit.loadSession(),
       expect: () => [
-        isA<DashboardState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<DashboardState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<DashboardState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isFalse)
-            .having((s) => s.errorMessage, 'errorMessage', 'Session expired. Please sign in again.'),
+            .having(
+              (s) => s.errorMessage,
+              'errorMessage',
+              'Session expired. Please sign in again.',
+            ),
       ],
       verify: (_) {
         expect(AuthSession().isAuthenticated, isFalse);
@@ -140,14 +181,21 @@ void main() {
     blocTest<DashboardCubit, DashboardState>(
       'should call handleSignOut and emit unauthenticated on signOut when token is present',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => 'active-token');
-        when(() => mockCommandService.handleSignOut(any())).thenAnswer((_) async => const Right(unit));
-        return DashboardCubit(mockCommandService, mockQueryService, mockLocalStorage);
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => 'active-token');
+        when(
+          () => mockCommandService.handleSignOut(any()),
+        ).thenAnswer((_) async => const Right(unit));
+        return DashboardCubit(
+          mockCommandService,
+          mockQueryService,
+          mockLocalStorage,
+        );
       },
       act: (cubit) => cubit.signOut(),
       expect: () => [
-        isA<DashboardState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<DashboardState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<DashboardState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isFalse),
@@ -160,13 +208,18 @@ void main() {
     blocTest<DashboardCubit, DashboardState>(
       'should skip handleSignOut and emit unauthenticated on signOut when token is null',
       build: () {
-        when(() => mockLocalStorage.getAccessToken()).thenAnswer((_) async => null);
-        return DashboardCubit(mockCommandService, mockQueryService, mockLocalStorage);
+        when(
+          () => mockLocalStorage.getAccessToken(),
+        ).thenAnswer((_) async => null);
+        return DashboardCubit(
+          mockCommandService,
+          mockQueryService,
+          mockLocalStorage,
+        );
       },
       act: (cubit) => cubit.signOut(),
       expect: () => [
-        isA<DashboardState>()
-            .having((s) => s.isLoading, 'isLoading', isTrue),
+        isA<DashboardState>().having((s) => s.isLoading, 'isLoading', isTrue),
         isA<DashboardState>()
             .having((s) => s.isLoading, 'isLoading', isFalse)
             .having((s) => s.isAuthenticated, 'isAuthenticated', isFalse),

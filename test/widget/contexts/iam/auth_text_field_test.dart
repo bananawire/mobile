@@ -26,15 +26,14 @@ void main() {
       expect(find.text('Enter your email'), findsOneWidget);
     });
 
-    testWidgets('should update controller when text is entered', (tester) async {
+    testWidgets('should update controller when text is entered', (
+      tester,
+    ) async {
       // Arrange
       final controller = TextEditingController();
       await tester.pumpWidget(
         buildTestableWidget(
-          AuthTextField(
-            controller: controller,
-            label: 'Email',
-          ),
+          AuthTextField(controller: controller, label: 'Email'),
         ),
       );
 
@@ -62,11 +61,15 @@ void main() {
       );
 
       // Assert
-      final editableText = tester.widget<EditableText>(find.byType(EditableText));
+      final editableText = tester.widget<EditableText>(
+        find.byType(EditableText),
+      );
       expect(editableText.obscureText, isTrue);
     });
 
-    testWidgets('should not obscure text when obscureText is false', (tester) async {
+    testWidgets('should not obscure text when obscureText is false', (
+      tester,
+    ) async {
       // Arrange
       final controller = TextEditingController();
 
@@ -82,11 +85,15 @@ void main() {
       );
 
       // Assert
-      final editableText = tester.widget<EditableText>(find.byType(EditableText));
+      final editableText = tester.widget<EditableText>(
+        find.byType(EditableText),
+      );
       expect(editableText.obscureText, isFalse);
     });
 
-    testWidgets('should render prefix and suffix icons when provided', (tester) async {
+    testWidgets('should render prefix and suffix icons when provided', (
+      tester,
+    ) async {
       // Arrange
       final controller = TextEditingController();
 
@@ -107,30 +114,35 @@ void main() {
       expect(find.byIcon(Icons.clear), findsOneWidget);
     });
 
-    testWidgets('should display validation error message when validator returns an error', (tester) async {
-      // Arrange
-      final formKey = GlobalKey<FormState>();
-      final controller = TextEditingController();
+    testWidgets(
+      'should display validation error message when validator returns an error',
+      (tester) async {
+        // Arrange
+        final formKey = GlobalKey<FormState>();
+        final controller = TextEditingController();
 
-      await tester.pumpWidget(
-        buildTestableWidget(
-          Form(
-            key: formKey,
-            child: AuthTextField(
-              controller: controller,
-              label: 'Required Field',
-              validator: (value) => (value == null || value.isEmpty) ? 'Field is required' : null,
+        await tester.pumpWidget(
+          buildTestableWidget(
+            Form(
+              key: formKey,
+              child: AuthTextField(
+                controller: controller,
+                label: 'Required Field',
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Field is required'
+                    : null,
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Act
-      formKey.currentState!.validate();
-      await tester.pumpAndSettle();
+        // Act
+        formKey.currentState!.validate();
+        await tester.pumpAndSettle();
 
-      // Assert
-      expect(find.text('Field is required'), findsOneWidget);
-    });
+        // Assert
+        expect(find.text('Field is required'), findsOneWidget);
+      },
+    );
   });
 }

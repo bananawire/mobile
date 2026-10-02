@@ -10,10 +10,7 @@ void main() {
       // Act
       await tester.pumpWidget(
         buildTestableWidget(
-          const AuthButton(
-            label: 'Sign In',
-            isLoading: false,
-          ),
+          const AuthButton(label: 'Sign In', isLoading: false),
         ),
       );
 
@@ -22,46 +19,51 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets('should render CircularProgressIndicator and not label when isLoading is true', (tester) async {
-      // Act
-      await tester.pumpWidget(
-        buildTestableWidget(
-          const AuthButton(
-            label: 'Sign In',
-            isLoading: true,
+    testWidgets(
+      'should render CircularProgressIndicator and not label when isLoading is true',
+      (tester) async {
+        // Act
+        await tester.pumpWidget(
+          buildTestableWidget(
+            const AuthButton(label: 'Sign In', isLoading: true),
           ),
-        ),
-      );
+        );
 
-      // Assert
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('Sign In'), findsNothing);
-    });
+        // Assert
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.text('Sign In'), findsNothing);
+      },
+    );
 
-    testWidgets('should trigger onPressed callback when tapped and not loading', (tester) async {
-      // Arrange
-      var wasPressed = false;
-      await tester.pumpWidget(
-        buildTestableWidget(
-          AuthButton(
-            label: 'Submit',
-            isLoading: false,
-            onPressed: () {
-              wasPressed = true;
-            },
+    testWidgets(
+      'should trigger onPressed callback when tapped and not loading',
+      (tester) async {
+        // Arrange
+        var wasPressed = false;
+        await tester.pumpWidget(
+          buildTestableWidget(
+            AuthButton(
+              label: 'Submit',
+              isLoading: false,
+              onPressed: () {
+                wasPressed = true;
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      // Act
-      await tester.tap(find.text('Submit'));
-      await tester.pump();
+        // Act
+        await tester.tap(find.text('Submit'));
+        await tester.pump();
 
-      // Assert
-      expect(wasPressed, isTrue);
-    });
+        // Assert
+        expect(wasPressed, isTrue);
+      },
+    );
 
-    testWidgets('should not trigger onPressed when isLoading is true', (tester) async {
+    testWidgets('should not trigger onPressed when isLoading is true', (
+      tester,
+    ) async {
       // Arrange
       var wasPressed = false;
       await tester.pumpWidget(
@@ -84,7 +86,9 @@ void main() {
       expect(wasPressed, isFalse);
     });
 
-    testWidgets('should render icon when icon is provided and not loading', (tester) async {
+    testWidgets('should render icon when icon is provided and not loading', (
+      tester,
+    ) async {
       // Act
       await tester.pumpWidget(
         buildTestableWidget(
@@ -101,7 +105,9 @@ void main() {
       expect(find.text('Google Sign In'), findsOneWidget);
     });
 
-    testWidgets('should render ElevatedButton when isSecondary is false', (tester) async {
+    testWidgets('should render ElevatedButton when isSecondary is false', (
+      tester,
+    ) async {
       // Act
       await tester.pumpWidget(
         buildTestableWidget(
@@ -118,7 +124,9 @@ void main() {
       expect(find.byType(OutlinedButton), findsNothing);
     });
 
-    testWidgets('should render OutlinedButton when isSecondary is true', (tester) async {
+    testWidgets('should render OutlinedButton when isSecondary is true', (
+      tester,
+    ) async {
       // Act
       await tester.pumpWidget(
         buildTestableWidget(

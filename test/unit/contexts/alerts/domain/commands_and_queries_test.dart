@@ -43,7 +43,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => RefreshAlertsCommand(page: -1),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('page must be >= 0'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('page must be >= 0'),
+          ),
+        ),
       );
     });
 
@@ -51,7 +57,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => RefreshAlertsCommand(size: 0),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('size must be between 1 and 100'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('size must be between 1 and 100'),
+          ),
+        ),
       );
     });
 
@@ -59,7 +71,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => RefreshAlertsCommand(size: 101),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('size must be between 1 and 100'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('size must be between 1 and 100'),
+          ),
+        ),
       );
     });
   });
@@ -87,7 +105,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertsQuery(page: -1),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('page must be >= 0'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('page must be >= 0'),
+          ),
+        ),
       );
     });
 
@@ -95,7 +119,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertsQuery(size: 0),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('size must be between 1 and 100'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('size must be between 1 and 100'),
+          ),
+        ),
       );
     });
 
@@ -103,7 +133,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertsQuery(size: 101),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('size must be between 1 and 100'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('size must be between 1 and 100'),
+          ),
+        ),
       );
     });
   });
@@ -137,7 +173,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertsByDeviceQuery(deviceId: ''),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('deviceId cannot be empty'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('deviceId cannot be empty'),
+          ),
+        ),
       );
     });
 
@@ -145,7 +187,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertsByDeviceQuery(deviceId: '   '),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('deviceId cannot be empty'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('deviceId cannot be empty'),
+          ),
+        ),
       );
     });
 
@@ -199,7 +247,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertsBySpaceQuery(spaceId: ''),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('spaceId cannot be empty'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('spaceId cannot be empty'),
+          ),
+        ),
       );
     });
 
@@ -207,7 +261,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertsBySpaceQuery(spaceId: '   '),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('spaceId cannot be empty'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('spaceId cannot be empty'),
+          ),
+        ),
       );
     });
 
@@ -253,7 +313,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertDailySummaryQuery(days: 0),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('days must be between 1 and 365'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('days must be between 1 and 365'),
+          ),
+        ),
       );
     });
 
@@ -261,7 +327,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => GetAlertDailySummaryQuery(days: 366),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('days must be between 1 and 365'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('days must be between 1 and 365'),
+          ),
+        ),
       );
     });
   });

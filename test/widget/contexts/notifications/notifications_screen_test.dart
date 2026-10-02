@@ -39,8 +39,9 @@ void main() {
   setUp(() {
     mockCubit = MockNotificationsCubit();
     when(() => mockCubit.state).thenReturn(const NotificationsState());
-    when(() => mockCubit.loadNotifications(isRefresh: any(named: 'isRefresh')))
-        .thenAnswer((_) async {});
+    when(
+      () => mockCubit.loadNotifications(isRefresh: any(named: 'isRefresh')),
+    ).thenAnswer((_) async {});
     when(() => mockCubit.loadMoreNotifications()).thenAnswer((_) async {});
     when(() => mockCubit.markAllAsSeen()).thenReturn(null);
 
@@ -57,133 +58,144 @@ void main() {
   });
 
   group('NotificationsScreen', () {
-    testWidgets('should show loading indicator when state is loading and list is empty', (tester) async {
-      // Arrange
-      when(() => mockCubit.state).thenReturn(
-        const NotificationsState(isLoading: true, notifications: []),
-      );
+    testWidgets(
+      'should show loading indicator when state is loading and list is empty',
+      (tester) async {
+        // Arrange
+        when(() => mockCubit.state).thenReturn(
+          const NotificationsState(isLoading: true, notifications: []),
+        );
 
-      // Act
-      await tester.pumpWidget(
-        buildTestableWidget(const NotificationsScreen()),
-      );
+        // Act
+        await tester.pumpWidget(
+          buildTestableWidget(const NotificationsScreen()),
+        );
 
-      // Assert
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    });
+        // Assert
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      },
+    );
 
-    testWidgets('should render empty state when not loading and list is empty', (tester) async {
-      // Arrange
-      when(() => mockCubit.state).thenReturn(
-        const NotificationsState(isLoading: false, notifications: []),
-      );
+    testWidgets(
+      'should render empty state when not loading and list is empty',
+      (tester) async {
+        // Arrange
+        when(() => mockCubit.state).thenReturn(
+          const NotificationsState(isLoading: false, notifications: []),
+        );
 
-      // Act
-      await tester.pumpWidget(
-        buildTestableWidget(const NotificationsScreen()),
-      );
-      await tester.pump();
+        // Act
+        await tester.pumpWidget(
+          buildTestableWidget(const NotificationsScreen()),
+        );
+        await tester.pump();
 
-      // Assert
-      expect(find.byIcon(Icons.notifications_off_outlined), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-    });
+        // Assert
+        expect(find.byIcon(Icons.notifications_off_outlined), findsOneWidget);
+        expect(find.byType(CircularProgressIndicator), findsNothing);
+      },
+    );
 
-    testWidgets('should render error state when errorMessage is present and list is empty', (tester) async {
-      // Arrange
-      when(() => mockCubit.state).thenReturn(
-        const NotificationsState(
-          isLoading: false,
-          errorMessage: 'Unable to reach backend service',
-          notifications: [],
-        ),
-      );
+    testWidgets(
+      'should render error state when errorMessage is present and list is empty',
+      (tester) async {
+        // Arrange
+        when(() => mockCubit.state).thenReturn(
+          const NotificationsState(
+            isLoading: false,
+            errorMessage: 'Unable to reach backend service',
+            notifications: [],
+          ),
+        );
 
-      // Act
-      await tester.pumpWidget(
-        buildTestableWidget(const NotificationsScreen()),
-      );
-      await tester.pump();
+        // Act
+        await tester.pumpWidget(
+          buildTestableWidget(const NotificationsScreen()),
+        );
+        await tester.pump();
 
-      // Assert
-      expect(find.text('Unable to reach backend service'), findsOneWidget);
-      expect(find.byIcon(Icons.error_outline), findsOneWidget);
-    });
+        // Assert
+        expect(find.text('Unable to reach backend service'), findsOneWidget);
+        expect(find.byIcon(Icons.error_outline), findsOneWidget);
+      },
+    );
 
-    testWidgets('should render notifications list when notifications are present', (tester) async {
-      // Arrange
-      final notifications = [
-        _sampleLog(
-          id: 'n-1',
-          title: 'High CO2 Alert',
-          message: 'Living room CO2 exceeded 1000 ppm',
-          sent: true,
-        ),
-        _sampleLog(
-          id: 'n-2',
-          title: 'Connection Lost',
-          message: 'Kitchen sensor went offline',
-          sent: false,
-          errorMessage: 'Device unreachable',
-        ),
-      ];
+    testWidgets(
+      'should render notifications list when notifications are present',
+      (tester) async {
+        // Arrange
+        final notifications = [
+          _sampleLog(
+            id: 'n-1',
+            title: 'High CO2 Alert',
+            message: 'Living room CO2 exceeded 1000 ppm',
+            sent: true,
+          ),
+          _sampleLog(
+            id: 'n-2',
+            title: 'Connection Lost',
+            message: 'Kitchen sensor went offline',
+            sent: false,
+            errorMessage: 'Device unreachable',
+          ),
+        ];
 
-      when(() => mockCubit.state).thenReturn(
-        NotificationsState(
-          isLoading: false,
-          notifications: notifications,
-          totalElements: 2,
-          totalPages: 1,
-          isLastPage: true,
-        ),
-      );
-
-      // Act
-      await tester.pumpWidget(
-        buildTestableWidget(const NotificationsScreen()),
-      );
-      await tester.pump();
-
-      // Assert
-      expect(find.text('High CO2 Alert'), findsOneWidget);
-      expect(find.text('Living room CO2 exceeded 1000 ppm'), findsOneWidget);
-      expect(find.text('Connection Lost'), findsOneWidget);
-      expect(find.text('Kitchen sensor went offline'), findsOneWidget);
-      expect(find.text('Device unreachable'), findsOneWidget);
-      expect(find.byIcon(Icons.notifications_active), findsOneWidget);
-    });
-
-    testWidgets('should call markAllAsSeen when loaded and lastSeenElements differs from totalElements', (tester) async {
-      // Arrange
-      final notifications = [
-        _sampleLog(
-          id: 'n-1',
-          title: 'Notification 1',
-          message: 'Message 1',
-        ),
-      ];
-
-      whenListen(
-        mockCubit,
-        Stream.fromIterable([
+        when(() => mockCubit.state).thenReturn(
           NotificationsState(
             isLoading: false,
             notifications: notifications,
-            totalElements: 1,
-            lastSeenElements: 0,
+            totalElements: 2,
+            totalPages: 1,
+            isLastPage: true,
           ),
-        ]),
-        initialState: const NotificationsState(isLoading: true),
-      );
+        );
 
-      // Act
-      await tester.pumpWidget(
-        buildTestableWidget(const NotificationsScreen()),
-      );
-      await tester.pump();
+        // Act
+        await tester.pumpWidget(
+          buildTestableWidget(const NotificationsScreen()),
+        );
+        await tester.pump();
 
-      // Assert
-      verify(() => mockCubit.markAllAsSeen()).called(1);
-    });
+        // Assert
+        expect(find.text('High CO2 Alert'), findsOneWidget);
+        expect(find.text('Living room CO2 exceeded 1000 ppm'), findsOneWidget);
+        expect(find.text('Connection Lost'), findsOneWidget);
+        expect(find.text('Kitchen sensor went offline'), findsOneWidget);
+        expect(find.text('Device unreachable'), findsOneWidget);
+        expect(find.byIcon(Icons.notifications_active), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'should call markAllAsSeen when loaded and lastSeenElements differs from totalElements',
+      (tester) async {
+        // Arrange
+        final notifications = [
+          _sampleLog(id: 'n-1', title: 'Notification 1', message: 'Message 1'),
+        ];
+
+        whenListen(
+          mockCubit,
+          Stream.fromIterable([
+            NotificationsState(
+              isLoading: false,
+              notifications: notifications,
+              totalElements: 1,
+              lastSeenElements: 0,
+            ),
+          ]),
+          initialState: const NotificationsState(isLoading: true),
+        );
+
+        // Act
+        await tester.pumpWidget(
+          buildTestableWidget(const NotificationsScreen()),
+        );
+        await tester.pump();
+
+        // Assert
+        verify(() => mockCubit.markAllAsSeen()).called(1);
+      },
+    );
   });
 }

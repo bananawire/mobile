@@ -7,29 +7,35 @@ import 'package:mobile/analytics/domain/model/valueobjects/trend_point.valueobje
 
 void main() {
   group('Aqi ValueObject', () {
-    test('should create instance when value is non-negative and category is non-empty', () {
-      // Arrange
-      const value = 42.0;
-      const category = 'Good';
+    test(
+      'should create instance when value is non-negative and category is non-empty',
+      () {
+        // Arrange
+        const value = 42.0;
+        const category = 'Good';
 
-      // Act
-      final aqi = Aqi(value, category);
+        // Act
+        final aqi = Aqi(value, category);
 
-      // Assert
-      expect(aqi.value, equals(42.0));
-      expect(aqi.category, equals('Good'));
-    });
+        // Assert
+        expect(aqi.value, equals(42.0));
+        expect(aqi.category, equals('Good'));
+      },
+    );
 
-    test('should trim category whitespace when category has surrounding spaces', () {
-      // Arrange
-      const category = '  Moderate  ';
+    test(
+      'should trim category whitespace when category has surrounding spaces',
+      () {
+        // Arrange
+        const category = '  Moderate  ';
 
-      // Act
-      final aqi = Aqi(65.0, category);
+        // Act
+        final aqi = Aqi(65.0, category);
 
-      // Assert
-      expect(aqi.category, equals('Moderate'));
-    });
+        // Assert
+        expect(aqi.category, equals('Moderate'));
+      },
+    );
 
     test('should allow zero value when creating instance', () {
       // Arrange & Act
@@ -43,11 +49,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => Aqi(-1.0, 'Good'),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('AQI value must be a non-negative finite number'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('AQI value must be a non-negative finite number'),
+          ),
+        ),
       );
     });
 
@@ -55,11 +63,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => Aqi(double.infinity, 'Good'),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('AQI value must be a non-negative finite number'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('AQI value must be a non-negative finite number'),
+          ),
+        ),
       );
     });
 
@@ -67,11 +77,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => Aqi(double.nan, 'Good'),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('AQI value must be a non-negative finite number'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('AQI value must be a non-negative finite number'),
+          ),
+        ),
       );
     });
 
@@ -79,11 +91,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => Aqi(42.0, ''),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('AQI category cannot be empty'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('AQI category cannot be empty'),
+          ),
+        ),
       );
     });
 
@@ -91,28 +105,33 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => Aqi(42.0, '   '),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('AQI category cannot be empty'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('AQI category cannot be empty'),
+          ),
+        ),
       );
     });
   });
 
   group('MetricDelta ValueObject', () {
-    test('should create instance when value and deltaPercentage are valid finite numbers', () {
-      // Arrange
-      const value = 24.5;
-      const delta = 3.2;
+    test(
+      'should create instance when value and deltaPercentage are valid finite numbers',
+      () {
+        // Arrange
+        const value = 24.5;
+        const delta = 3.2;
 
-      // Act
-      final metricDelta = MetricDelta(value, delta);
+        // Act
+        final metricDelta = MetricDelta(value, delta);
 
-      // Assert
-      expect(metricDelta.value, equals(24.5));
-      expect(metricDelta.deltaPercentage, equals(3.2));
-    });
+        // Assert
+        expect(metricDelta.value, equals(24.5));
+        expect(metricDelta.deltaPercentage, equals(3.2));
+      },
+    );
 
     test('should allow null deltaPercentage when creating instance', () {
       // Arrange & Act
@@ -135,11 +154,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => MetricDelta(double.infinity, 1.0),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Metric value must be a finite number'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Metric value must be a finite number'),
+          ),
+        ),
       );
     });
 
@@ -147,11 +168,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => MetricDelta(double.nan, 1.0),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Metric value must be a finite number'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Metric value must be a finite number'),
+          ),
+        ),
       );
     });
 
@@ -159,11 +182,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => MetricDelta(10.0, double.infinity),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Delta percentage must be null or a finite number'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Delta percentage must be null or a finite number'),
+          ),
+        ),
       );
     });
 
@@ -171,11 +196,13 @@ void main() {
       // Arrange, Act & Assert
       expect(
         () => MetricDelta(10.0, double.nan),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Delta percentage must be null or a finite number'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Delta percentage must be null or a finite number'),
+          ),
+        ),
       );
     });
   });
@@ -227,11 +254,13 @@ void main() {
           temperature: 22.0,
           humidity: 45.0,
         ),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Timestamp cannot be empty'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Timestamp cannot be empty'),
+          ),
+        ),
       );
     });
 
@@ -246,11 +275,13 @@ void main() {
           temperature: 22.0,
           humidity: 45.0,
         ),
-        throwsA(isA<ArgumentError>().having(
-          (e) => e.message,
-          'message',
-          contains('Timestamp cannot be empty'),
-        )),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('Timestamp cannot be empty'),
+          ),
+        ),
       );
     });
 
@@ -380,22 +411,25 @@ void main() {
       expect(telemetry.timestamp, equals('2026-10-02T12:30:00Z'));
     });
 
-    test('should fallback to fallbackDeviceId when deviceId is missing in json', () {
-      // Arrange
-      final json = {
-        'co2': 400.0,
-        'pm2_5': 5.0,
-        'temperature': 20.0,
-        'humidity': 40.0,
-      };
+    test(
+      'should fallback to fallbackDeviceId when deviceId is missing in json',
+      () {
+        // Arrange
+        final json = {
+          'co2': 400.0,
+          'pm2_5': 5.0,
+          'temperature': 20.0,
+          'humidity': 40.0,
+        };
 
-      // Act
-      final telemetry = LiveTelemetry.fromJson(json, 'fallback-id');
+        // Act
+        final telemetry = LiveTelemetry.fromJson(json, 'fallback-id');
 
-      // Assert
-      expect(telemetry.deviceId, equals('fallback-id'));
-      expect(telemetry.timestamp, isNotEmpty);
-    });
+        // Assert
+        expect(telemetry.deviceId, equals('fallback-id'));
+        expect(telemetry.timestamp, isNotEmpty);
+      },
+    );
 
     test('should default invalid numeric values to zero', () {
       // Arrange

@@ -22,7 +22,8 @@ class FakeGetAlertsQuery extends Fake implements GetAlertsQuery {}
 
 class FakeGetAlertsBySpaceQuery extends Fake implements GetAlertsBySpaceQuery {}
 
-class FakeGetAlertDailySummaryQuery extends Fake implements GetAlertDailySummaryQuery {}
+class FakeGetAlertDailySummaryQuery extends Fake
+    implements GetAlertDailySummaryQuery {}
 
 void main() {
   setUpAll(() {
@@ -35,7 +36,10 @@ void main() {
     late MockAlertsQueryService mockQueryService;
     late AlertsCubit cubit;
 
-    Alert createDummyAlert(String id, {AlertStatus status = AlertStatus.active}) {
+    Alert createDummyAlert(
+      String id, {
+      AlertStatus status = AlertStatus.active,
+    }) {
       return Alert(
         id: AlertId(id),
         deviceId: 'dev-1',
@@ -106,9 +110,10 @@ void main() {
             ),
           ).thenAnswer((_) async => Right(createDummyPage()));
 
-          when(
-            () => mockQueryService.handleGetDailySummary(any()),
-          ).thenAnswer((_) async => const Right([DailyAlertCount(date: '2026-10-02', count: 3)]));
+          when(() => mockQueryService.handleGetDailySummary(any())).thenAnswer(
+            (_) async =>
+                const Right([DailyAlertCount(date: '2026-10-02', count: 3)]),
+          );
 
           return cubit;
         },
@@ -120,8 +125,16 @@ void main() {
           isA<AlertsState>()
               .having((s) => s.isLoading, 'isLoading', isFalse)
               .having((s) => s.activeAlertsPage, 'activeAlertsPage', isNotNull)
-              .having((s) => s.dailySummary.length, 'dailySummary length', equals(1))
-              .having((s) => s.currentAlerts.length, 'currentAlerts length', equals(1))
+              .having(
+                (s) => s.dailySummary.length,
+                'dailySummary length',
+                equals(1),
+              )
+              .having(
+                (s) => s.currentAlerts.length,
+                'currentAlerts length',
+                equals(1),
+              )
               .having((s) => s.errorMessage, 'errorMessage', isNull),
         ],
       );
@@ -148,9 +161,17 @@ void main() {
           isA<AlertsState>().having((s) => s.isLoading, 'isLoading', isTrue),
           isA<AlertsState>()
               .having((s) => s.isLoading, 'isLoading', isFalse)
-              .having((s) => s.historyAlertsPage, 'historyAlertsPage', isNotNull)
+              .having(
+                (s) => s.historyAlertsPage,
+                'historyAlertsPage',
+                isNotNull,
+              )
               .having((s) => s.activeAlertsPage, 'activeAlertsPage', isNull)
-              .having((s) => s.currentAlerts.length, 'currentAlerts length', equals(1)),
+              .having(
+                (s) => s.currentAlerts.length,
+                'currentAlerts length',
+                equals(1),
+              ),
         ],
       );
 
@@ -162,7 +183,10 @@ void main() {
               any(),
               status: any(named: 'status'),
             ),
-          ).thenAnswer((_) async => const Left(Failure('Failed to load alerts', statusCode: 500)));
+          ).thenAnswer(
+            (_) async =>
+                const Left(Failure('Failed to load alerts', statusCode: 500)),
+          );
 
           when(
             () => mockQueryService.handleGetDailySummary(any()),
@@ -175,7 +199,11 @@ void main() {
           isA<AlertsState>().having((s) => s.isLoading, 'isLoading', isTrue),
           isA<AlertsState>()
               .having((s) => s.isLoading, 'isLoading', isFalse)
-              .having((s) => s.errorMessage, 'errorMessage', equals('Failed to load alerts')),
+              .having(
+                (s) => s.errorMessage,
+                'errorMessage',
+                equals('Failed to load alerts'),
+              ),
         ],
       );
 
@@ -196,7 +224,11 @@ void main() {
           isA<AlertsState>().having((s) => s.isLoading, 'isLoading', isTrue),
           isA<AlertsState>()
               .having((s) => s.isLoading, 'isLoading', isFalse)
-              .having((s) => s.errorMessage, 'errorMessage', contains('Network error'))
+              .having(
+                (s) => s.errorMessage,
+                'errorMessage',
+                contains('Network error'),
+              )
               .having((s) => s.activeAlertsPage, 'activeAlertsPage', isNull)
               .having((s) => s.dailySummary, 'dailySummary', isEmpty),
         ],
@@ -244,7 +276,10 @@ void main() {
 
           when(
             () => mockQueryService.handleGetDailySummaryBySpace(any(), any()),
-          ).thenAnswer((_) async => const Right([DailyAlertCount(date: '2026-10-02', count: 5)]));
+          ).thenAnswer(
+            (_) async =>
+                const Right([DailyAlertCount(date: '2026-10-02', count: 5)]),
+          );
 
           return cubit;
         },
@@ -267,7 +302,11 @@ void main() {
               any(),
               status: any(named: 'status'),
             ),
-          ).thenAnswer((_) async => const Left(Failure('Space alerts unavailable', statusCode: 403)));
+          ).thenAnswer(
+            (_) async => const Left(
+              Failure('Space alerts unavailable', statusCode: 403),
+            ),
+          );
 
           when(
             () => mockQueryService.handleGetDailySummaryBySpace(any(), any()),
@@ -280,7 +319,11 @@ void main() {
           isA<AlertsState>().having((s) => s.isLoading, 'isLoading', isTrue),
           isA<AlertsState>()
               .having((s) => s.isLoading, 'isLoading', isFalse)
-              .having((s) => s.errorMessage, 'errorMessage', equals('Space alerts unavailable')),
+              .having(
+                (s) => s.errorMessage,
+                'errorMessage',
+                equals('Space alerts unavailable'),
+              ),
         ],
       );
 
@@ -301,7 +344,11 @@ void main() {
           isA<AlertsState>().having((s) => s.isLoading, 'isLoading', isTrue),
           isA<AlertsState>()
               .having((s) => s.isLoading, 'isLoading', isFalse)
-              .having((s) => s.errorMessage, 'errorMessage', contains('Fatal error')),
+              .having(
+                (s) => s.errorMessage,
+                'errorMessage',
+                contains('Fatal error'),
+              ),
         ],
       );
     });
@@ -312,7 +359,11 @@ void main() {
         build: () => cubit,
         act: (cubit) => cubit.setStatusFilter(AlertStatus.active),
         expect: () => [
-          isA<AlertsState>().having((s) => s.selectedStatus, 'selectedStatus', equals(AlertStatus.active)),
+          isA<AlertsState>().having(
+            (s) => s.selectedStatus,
+            'selectedStatus',
+            equals(AlertStatus.active),
+          ),
         ],
       );
 
@@ -322,7 +373,11 @@ void main() {
         seed: () => const AlertsState(selectedStatus: AlertStatus.active),
         act: (cubit) => cubit.setStatusFilter(null),
         expect: () => [
-          isA<AlertsState>().having((s) => s.selectedStatus, 'selectedStatus', isNull),
+          isA<AlertsState>().having(
+            (s) => s.selectedStatus,
+            'selectedStatus',
+            isNull,
+          ),
         ],
       );
 
@@ -331,7 +386,11 @@ void main() {
         build: () => cubit,
         act: (cubit) => cubit.setMetricFilter(MetricType.co2),
         expect: () => [
-          isA<AlertsState>().having((s) => s.selectedMetric, 'selectedMetric', equals(MetricType.co2)),
+          isA<AlertsState>().having(
+            (s) => s.selectedMetric,
+            'selectedMetric',
+            equals(MetricType.co2),
+          ),
         ],
       );
 
@@ -340,7 +399,11 @@ void main() {
         build: () => cubit,
         act: (cubit) => cubit.setViewMode(AlertViewMode.grid),
         expect: () => [
-          isA<AlertsState>().having((s) => s.viewMode, 'viewMode', equals(AlertViewMode.grid)),
+          isA<AlertsState>().having(
+            (s) => s.viewMode,
+            'viewMode',
+            equals(AlertViewMode.grid),
+          ),
         ],
       );
 
@@ -383,7 +446,9 @@ void main() {
               any(),
               status: any(named: 'status'),
             ),
-          ).thenAnswer((_) async => Right(createDummyPage(page: 1, totalPages: 3)));
+          ).thenAnswer(
+            (_) async => Right(createDummyPage(page: 1, totalPages: 3)),
+          );
 
           when(
             () => mockQueryService.handleGetDailySummary(any()),
@@ -423,7 +488,9 @@ void main() {
               any(),
               status: any(named: 'status'),
             ),
-          ).thenAnswer((_) async => Right(createDummyPage(page: 0, totalPages: 3)));
+          ).thenAnswer(
+            (_) async => Right(createDummyPage(page: 0, totalPages: 3)),
+          );
 
           when(
             () => mockQueryService.handleGetDailySummary(any()),
@@ -460,7 +527,9 @@ void main() {
               any(),
               status: any(named: 'status'),
             ),
-          ).thenAnswer((_) async => Right(createDummyPage(page: 0, totalPages: 2)));
+          ).thenAnswer(
+            (_) async => Right(createDummyPage(page: 0, totalPages: 2)),
+          );
 
           when(
             () => mockQueryService.handleGetDailySummary(any()),
