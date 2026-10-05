@@ -28,6 +28,19 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Patrol E2E testing instrumentation runner.
+        // Without this, `patrol test` reports "Total: 0" because the Android
+        // JUnit runner has nothing to enumerate. Docs:
+        // https://patrol.leancode.co/getting-started#android
+        testInstrumentationRunner = "pl.leancode.patrol.PatrolJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
+    }
+
+    testOptions {
+        // Required by Patrol for Android Test Orchestrator support.
+        // Docs: https://patrol.leancode.co/getting-started#android
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     buildTypes {
@@ -44,4 +57,7 @@ flutter {
 }
 
 dependencies {
+    // Required by Patrol for Android Test Orchestrator.
+    // Docs: https://patrol.leancode.co/getting-started#android
+    androidTestUtil("androidx.test:orchestrator:1.5.1")
 }

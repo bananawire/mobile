@@ -66,6 +66,13 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
 
+# Patrol E2E testing configuration.
+# Docs: https://patrol.leancode.co/getting-started
+patrol:
+  app_name: ClairCore
+  android:
+    package_name: com.clair.app
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
