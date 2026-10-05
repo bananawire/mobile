@@ -55,12 +55,25 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Patrol: E2E UI testing framework for Flutter.
+  # Docs: https://patrol.leancode.co  |  Latest stable: 4.10.0
+  patrol: ^4.10.0
+
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  mocktail: ^1.0.5
+  bloc_test: ^10.0.0
+
+# Patrol E2E testing configuration.
+# Docs: https://patrol.leancode.co/getting-started
+patrol:
+  app_name: ClairCore
+  android:
+    package_name: com.clair.app
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

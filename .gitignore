@@ -45,11 +45,17 @@ app.*.map.json
 /android/app/release
 
 files/
-.env
 
 /linux
 /macos
 /web
 /windows
 
+# Patrol E2E testing (auto-generated bundle + secrets file)
+# Docs: https://patrol.leancode.co/getting-started
+**/test_bundle.dart
+.patrol.env
+
 *.json
+config.bat
+node_modules
