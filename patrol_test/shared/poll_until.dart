@@ -1,23 +1,18 @@
-// patrol_test/alert_flow/poll_until.dart
+// patrol_test/shared/poll_until.dart
 //
-// Cross-cutting layer: polling.
+// Cross-cutting polling helper.
 //
-// Wraps the "poll an action until it returns true, with a hard timeout"
-// pattern that several steps in the alert-flow E2E test rely on (waiting
-// for an org to show in the GET /organizations list, waiting for an alert
-// to appear on the Alerts tab, etc.).
-//
-// Polling here means REAL-TIME waits via Future.delayed. Patrol's
-// `pumpAndSettle()` only advances the Flutter clock; it does not actually
-// wait for the backend to process threshold changes or to receive
-// telemetry that may trigger alerts.
+// Several happy-path tests need to wait for the backend to propagate a
+// write (create org / space / device) before they can assert state. Polling
+// is REAL TIME via Future.delayed because Patrol's `pumpAndSettle` only
+// advances the Flutter clock — it does not wait for the backend.
 
 import 'package:flutter/foundation.dart';
 
 /// Polls [action] until it returns true, waiting [interval] between
 /// attempts, with a hard [timeout]. Returns true if it succeeded, false
-/// otherwise. Exceptions thrown by [action] are caught and logged; they do
-/// not abort the poll (the backend may be transiently unreachable).
+/// otherwise. Exceptions thrown by [action] are caught and logged so a
+/// transient backend hiccup does not abort the poll.
 Future<bool> pollUntil(
   Future<bool> Function() action, {
   required Duration timeout,

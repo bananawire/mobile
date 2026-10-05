@@ -1,34 +1,31 @@
-// patrol_test/alert_flow/iam_setup.dart
+// patrol_test/shared/auth_steps.dart
 //
-// Bounded context: iam (Identity & Access Management).
+// IAM helpers reusable across every happy-path test that needs the user
+// to be authenticated.
 //
-// This file owns the login step. It is reused by the alert-flow E2E test to
-// put the app in an authenticated state before exercising the rest of the
-// flow. The same default credentials are used as in `login_test.dart`.
-//
-// It also captures the IDs of organizations that existed BEFORE the test
-// ran — those IDs are written to [protectedOrganizationIds] in
-// cleanup_state.dart so the cleanup layer refuses to delete them.
+// Each test owns its own login step (no global session): this keeps
+// tests independent and lets the report show "login failed for test X"
+// rather than "test X failed during step 5 after a shared login".
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:patrol/patrol.dart' show PatrolIntegrationTester;
 
 import 'package:mobile/core/di/service_locator.dart';
 import 'package:mobile/devices/domain/model/queries/get_user_organizations.query.dart';
 import 'package:mobile/devices/domain/model/readmodels/organization.read_model.dart';
 import 'package:mobile/devices/domain/services/organizations.query-service.dart';
 
+import 'auth_consts.dart';
 import 'cleanup_state.dart';
 
-// QA credentials (same defaults as login_test.dart).
-const String kTestEmail = 'fafox59733@findize.com';
-const String kTestPassword = 'SecurePass123!';
-
-/// Performs the login flow through the UI.
+/// Signs the test user in through the UI and waits for the post-login
+/// Analytics tab to appear.
 ///
-/// Assumes the app is currently unauthenticated (the test_bootstrap sets
-/// AuthSession = false). After login, GoRouter redirects to /analytics.
-Future<void> login($) async {
+/// Assumes the app is currently unauthenticated (test_bootstrap sets
+/// AuthSession = false). After this returns, GoRouter has routed to
+/// /analytics and the bottom nav is visible.
+Future<void> login(PatrolIntegrationTester $) async {
   await $('Login to Clair').waitUntilVisible();
   await $(TextFormField).at(0).enterText(kTestEmail);
   await $(TextFormField).at(1).enterText(kTestPassword);
@@ -36,10 +33,13 @@ Future<void> login($) async {
   await $('Analytics').waitUntilVisible();
 }
 
-/// Captures the IDs of organizations that exist BEFORE the test creates
-/// anything, and writes them to [protectedOrganizationIds]. The cleanup
-/// layer uses this set to refuse to delete any organization that the user
-/// already had.
+/// Captures the IDs of organizations that exist BEFORE a test creates
+/// anything, and writes them to [protectedOrganizationIds] in
+/// `cleanup_state.dart`. Tests that create organizations use this set as
+/// a safety guard so cleanup never deletes a pre-existing org.
+///
+/// Returns the list of organizations so callers can do additional
+/// assertions if needed.
 Future<List<OrganizationReadModel>> snapshotOriginalOrganizations() async {
   final result =
       await getIt<OrganizationsQueryService>().handleGetUserOrganizations(
